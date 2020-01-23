@@ -50,7 +50,8 @@
 
           <b-card-text> address: {{ connection.networkAddress }} </b-card-text>
           <!-- <b-card-text> protocol: {{ connection.protocol }} </b-card-text> -->
-          <b-card-text>coordinates: {{ connection.coordinates }} </b-card-text>
+          <b-card-text>longitude: {{ connection.longitude }} </b-card-text>
+          <b-card-text>latitude: {{ connection.latitude }} </b-card-text>
 
           <b-button @click="deleteConnection(connection)" variant="danger"
             >delete</b-button

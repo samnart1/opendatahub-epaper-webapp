@@ -25,7 +25,8 @@
               >{{ location.name }}</option
             >
           </b-form-select>
-          <v-text-field v-model="coordinates" label="Coordinates" required />
+          <v-text-field v-model="longitude" label="Longitude" required />
+          <v-text-field v-model="latitude" label="Latitude" required />
           <!-- <v-text-field v-model="protocol" label="Protocol" required /> -->
           <v-text-field
             v-model="networkAddress"
@@ -46,7 +47,8 @@ export default {
   data() {
     return {
       name: "name",
-      coordinates: "coordinates",
+      longitude: "",
+      latitude : "",
       displayUuid: "",
       locationUuid: "",
       networkAddress: "192.168.13",
@@ -66,15 +68,18 @@ export default {
       // eslint-disable-next-line
       const {
         name,
-        coordinates,
+        longitude,
+        latitude,
         displayUuid,
         locationUuid,
         networkAddress,
         // protocol
       } = this;
+      
       const connection = {
         name,
-        coordinates,
+        longitude,
+        latitude,
         displayUuid,
         locationUuid,
         networkAddress,

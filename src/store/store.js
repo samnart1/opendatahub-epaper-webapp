@@ -11,7 +11,7 @@ export default new Vuex.Store({
     locations: [],
     connections: [],
     templates: [],
-    URI : "http://10.199.226.245:8081"
+    URI : "http://localhost:8081"
   },
 
   getters: {

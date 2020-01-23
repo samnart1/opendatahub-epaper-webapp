@@ -25,10 +25,17 @@
 
           <v-text-field
             v-if="connectionUpdated"
-            v-model="connectionUpdated.coordinates"
-            label="Coordinates"
+            v-model="connectionUpdated.longitude"
+            label="Longitude"
             required
-            >{{ connectionUpdated.coordinates }}</v-text-field
+            >{{ connectionUpdated.longitude }}</v-text-field
+          >
+           <v-text-field
+            v-if="connectionUpdated"
+            v-model="connectionUpdated.latitude"
+            label="Latitude"
+            required
+            >{{ connectionUpdated.latitude }}</v-text-field
           >
 
           <v-text-field
