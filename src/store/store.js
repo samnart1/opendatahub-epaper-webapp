@@ -11,7 +11,7 @@ export default new Vuex.Store({
     locations: [],
     connections: [],
     templates: [],
-    URI : process.env.API || "http://localhost:8081"
+    URI : process.env.VUE_APP_API_URL
   },
 
   getters: {
