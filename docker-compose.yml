@@ -8,8 +8,6 @@ services:
        - ./:/code
     working_dir: /code
     command: yarn serve
-    environment:
-      HOST: 0.0.0.0
-      API: 'https://api.epaper.testingmachine.eu/'
+    env_file: .env
     ports:
       - "3000:8080"
