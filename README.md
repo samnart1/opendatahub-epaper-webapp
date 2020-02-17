@@ -30,7 +30,10 @@ yarn serve
 ### How to send and image to a display
 1) Set up the [API](https://github.com/noi-techpark/e-ink-displays-api) by following the README there
 2) Set up a Physical display by following the README of the [backend](https://github.com/noi-techpark/e-ink-displays-backend)
-3) Set the IP-Address of the machine where you run the [API](https://github.com/noi-techpark/e-ink-displays-api) in .env file in root directory. Note: f you are using Vue cli 3, only variables that start with VUE_APP_ will be loaded.
+3) Set the IP-Address of the machine where you run the
+   [API](https://github.com/noi-techpark/e-ink-displays-api) in `.env` file in
+   root directory. You can copy the defaults from `.env.example`. Note: If you
+   are using Vue cli 3, only variables that start with VUE_APP_ will be loaded.
 ```
 VUE_APP_API_URL=http://localhost:8081
 ```
