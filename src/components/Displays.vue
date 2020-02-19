@@ -8,9 +8,24 @@
           <b-card-img v-bind:src="'data:image/jpeg;base64,' + display.image" />
           <b-button @click="sendToDisplay(display.uuid)">send</b-button>
           <b-button @click="clearDisplay(display.uuid)">clear</b-button>
+          <b-button @click="getCurrentState(display.uuid)">state</b-button>
           <b-button @click="deleteDisplay(display)" variant="danger"
             >delete</b-button
           >
+        </b-card>
+
+        <b-card
+          title="state"
+          v-if="state"
+          style="max-width: 20rem;"
+          class="mb-2"
+        >
+          <b-card-text> IP: {{ state.ipAddress }} </b-card-text>
+           <b-card-text> MAC: {{ state.macAddress }} </b-card-text>
+            <b-card-text> battery: {{ state.batteryState }} </b-card-text>
+             <b-card-text> has image: {{ state.hasImage }} </b-card-text>
+             <b-card-text> sleeping : {{ state.sleeping }} </b-card-text>
+              <b-card-text> last state : {{ state.lastState | moment("dddd, MMMM Do YYYY, h:mm:ss a") }} </b-card-text>
         </b-card>
       </li>
     </ul>
@@ -78,6 +93,11 @@
 import axios from "axios";
 
 export default {
+  data() {
+    return {
+      state: null
+    };
+  },
   computed: {
     displays() {
       return this.$store.state.displays;
@@ -106,7 +126,8 @@ export default {
       this.$store.dispatch("deleteTemplate", template);
     },
     sendToDisplay(uuid) {
-      const URL = this.$store.state.URI + "/display/send-to-e-ink-display/" + uuid;
+      const URL =
+        this.$store.state.URI + "/display/send-to-e-ink-display/" + uuid;
       axios
         .post(URL)
         .then()
@@ -116,10 +137,22 @@ export default {
         });
     },
     clearDisplay(uuid) {
-      const URL = this.$store.state.URI + "/display/clear-e-ink-display/" + uuid;
+      const URL =
+        this.$store.state.URI + "/display/clear-e-ink-display/" + uuid;
       axios
         .post(URL)
         .then()
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+        });
+    },
+    getCurrentState(uuid) {
+      const URL =
+        this.$store.state.URI + "/display/get-e-ink-display-state/" + uuid;
+      axios
+        .get(URL)
+        .then(response => (this.state = response.data))
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
