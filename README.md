@@ -3,12 +3,17 @@ Frontend to manage edisplay-backend.
 Has all CRUD operations implemented to manage Displays, Locations, Connections and Templates.
 Fully created with [Vue.js](https://vuejs.org/)
 
-## Table of Contents
-- [Project setup for development](#Project-setup-for-development)
-- [How to send and image to a display](#How-to-send-and-image-to-a-display)
-- [Compiles and minifies for production](Compiles-and-minifies-for-production)
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Project setup for development](#project-setup-for-development)
+- [How to send and image to a display](#how-to-send-and-image-to-a-display)
+- [Compiles and minifies for production](#compiles-and-minifies-for-production)
 - [Licenses](#licenses)
 - [Third party components](#third-party-components)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ### Project setup for development
 Clone this repository
