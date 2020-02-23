@@ -17,7 +17,7 @@
         <form @submit.prevent="updateDisplay">
           <v-text-field
             v-if="displayUpdated"
-            v-model="name"
+            v-model="displayUpdated.name"
             label="Name"
             required
             >{{ displayUpdated.name }}</v-text-field
@@ -45,9 +45,8 @@ export default {
   data() {
     return {
       displayUpdated : null,
-      name: "name",
       templateUuid: ""
-    };
+    }
   },
   computed: {
     displays() {
@@ -59,8 +58,8 @@ export default {
   },
   methods: {
     updateDisplay() {
-      const { name, templateUuid, displayUpdated } = this;
-      const data = { name, templateUuid, displayUpdated };
+      const { templateUuid, displayUpdated } = this;
+      const data = { templateUuid, displayUpdated };
       this.$store.dispatch("updateDisplay", data);
     }
   }

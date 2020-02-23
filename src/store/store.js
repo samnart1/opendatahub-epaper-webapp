@@ -4,14 +4,13 @@ import axios from "axios";
 
 Vue.use(Vuex);
 
-
 export default new Vuex.Store({
   state: {
     displays: [],
     locations: [],
     connections: [],
     templates: [],
-    URI : process.env.VUE_APP_API_URL
+    URI: process.env.VUE_APP_API_URL
   },
 
   getters: {
@@ -133,13 +132,15 @@ export default new Vuex.Store({
     },
 
     createDisplay({ commit }, data) {
-      let formData = new FormData()
-      formData.append("name", data.name)
-      formData.append("templateUuid",data.templateUuid)
+      let formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("templateUuid", data.templateUuid);
 
       const URL = this.state.URI + "/display/create";
       axios
-        .post(URL, formData ,  { headers: { 'Content-Type': 'multipart/form-data' }})
+        .post(URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
         .then(response => {
           commit("ADD_DISPLAY", response.data);
         })
@@ -177,12 +178,14 @@ export default new Vuex.Store({
 
     createTemplate({ commit }, data) {
       const URL = this.state.URI + "/template/create";
-      let formData = new FormData()
-      formData.append("name",data.name)
-      formData.append("image",data.image)
-      
+      let formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("image", data.image);
+
       axios
-        .post(URL, formData ,  { headers: { 'Content-Type': 'multipart/form-data' }})
+        .post(URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
         .then(response => {
           commit("ADD_TEMPLATE", response.data);
         })
@@ -236,11 +239,13 @@ export default new Vuex.Store({
         });
     },
 
-    updateDisplay({ commit }, display) {
-      const URL = this.state.URI + "/display/update";
+    updateDisplay({ commit }, data) {
+      const URL = this.state.URI + "/display/update/" + data.templateUuid;
       axios
-        .put(URL, display)
-        .then(commit("UPDATE_DISPLAY", display))
+        .put(URL, data.displayUpdated)
+        .then(response => {
+          commit("UPDATE_DISPLAY", response.data);
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
