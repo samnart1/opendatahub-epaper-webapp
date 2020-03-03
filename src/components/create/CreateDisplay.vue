@@ -7,15 +7,9 @@
       <v-card-text>
         <form @submit.prevent="createDisplay">
           <v-text-field v-model="name" label="Name" required />
-          <b-form-select v-model="templateUuid">
-            <option :value="null">Select Template</option>
-            <option
-              v-for="template in templates"
-              :key="template.uuid"
-              :value="template.uuid"
-              >{{ template.name }}</option
-            >
-          </b-form-select>
+          <v-select required  v-model='templateUuid' :items="templates" item-value='uuid' item-text="name"  return-object>
+       
+          </v-select>
           <v-btn type="submit">
             Add
           </v-btn>

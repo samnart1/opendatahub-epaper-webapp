@@ -2,33 +2,25 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
 
-    <div class="content">
-      <b-card title="Card Title" no-body>
-        <b-card-header header-tag="nav">
-          <b-nav card-header tabs>
-            <b-nav-item
-              v-if="authenticated"
-              to="/login"
-              v-on:click.native="logout()"
-              replace
-              >Logout</b-nav-item
-            >
-            <b-nav-item   v-if="authenticated" to="/dashboard" exact exact-active-class="active"
-              >Dashboard</b-nav-item
-            >
-            <b-nav-item   v-if="authenticated" to="/create" exact exact-active-class="active"
-              >Create</b-nav-item
-            >
-            <b-nav-item  v-if="authenticated" to="/update" exact exact-active-class="active"
-              >Edit</b-nav-item
-            >
-          </b-nav>
-        </b-card-header>
+    <v-btn
+        text
+        color="primary"
+        v-if="authenticated"
+        to="/login"
+        v-on:click.native="logout()"
+        >Logout</v-btn
+      >
+      <v-btn text color="primary" v-if="authenticated" to="/dashboard"
+        >Dashboard</v-btn
+      >
+      <v-btn v-if="authenticated" to="/create" text color="primary"
+        >Create</v-btn
+      >
+      <v-btn v-if="authenticated" to="/update" text color="primary">Edit</v-btn>
 
-        <b-card-body class="text-center">
-          <router-view @authenticated="setAuthenticated" />
-        </b-card-body>
-      </b-card>
+    <div class="content">
+      
+      <router-view @authenticated="setAuthenticated" />
     </div>
   </div>
 </template>
@@ -38,18 +30,18 @@ export default {
   name: "app",
   data() {
     return {
-        authenticated: false,
-        mockAccount: {
-            username: "user",
-            password: "pass"
-        }
-    }
-},
+      authenticated: false,
+      mockAccount: {
+        username: "user",
+        password: "pass"
+      }
+    };
+  },
   mounted() {
-    if(!this.authenticated) {
-        this.$router.replace({ name: "login" });
+    if (!this.authenticated) {
+      this.$router.replace({ name: "login" });
     }
-},
+  },
   methods: {
     setAuthenticated(status) {
       this.authenticated = status;
@@ -81,7 +73,6 @@ export default {
 .content {
   margin-top: 60px;
   margin-bottom: 60px;
-  width: 70%;
-  margin-left: 15%;
+  width: 100%;
 }
 </style>

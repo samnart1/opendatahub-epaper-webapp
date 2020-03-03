@@ -135,6 +135,8 @@ export default new Vuex.Store({
       let formData = new FormData();
       formData.append("name", data.name);
       formData.append("templateUuid", data.templateUuid);
+      formData.append("width", 100);
+      formData.append("height", 200);
 
       const URL = this.state.URI + "/display/create";
       axios

@@ -7,13 +7,10 @@
       <v-card-text>
         <form @submit.prevent="createTemplate">
           <v-text-field v-model="name" label="Name" required />
-          <b-form-file
-            v-model="image"
-            :state="Boolean(image)"
+          <v-file-input v-model="image"
             accept="image/jpeg, image/png, image/bmp "
-            placeholder="Choose a image or drop it here..."
-            drop-placeholder="Drop image here..."
-          ></b-form-file>
+            label="Choose a image or drop it here..."
+          ></v-file-input>
           <v-btn type="submit">
             Add
           </v-btn>
@@ -27,7 +24,7 @@ export default {
   data() {
     return {
       name: "name",
-      image: ""
+      image: null
     };
   },
   methods: {
