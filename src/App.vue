@@ -73,6 +73,7 @@ export default {
 .content {
   margin-top: 60px;
   margin-bottom: 60px;
-  width: 100%;
+  margin-left: 10%;
+  width: 80%;
 }
 </style>

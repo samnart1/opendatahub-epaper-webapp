@@ -1,48 +1,31 @@
 <template>
-  <div>
-    <v-layout row>
-      <v-flex lg3 offset-lg-1>
-        <v-card>
-          <v-toolbar color="light-blue" light extended>
-            <v-toolbar-side-icon></v-toolbar-side-icon>
+  <v-row justify="center">
+    <v-expansion-panels popout>
+      <v-expansion-panel v-for="(item, i) in displays" :key="i">
+        <v-expansion-panel-header>{{ item.name }}</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-card>
+            <v-card-title>{{ item.name }}</v-card-title>
+            <v-card-text>{{ item.batteryPercentage }} %</v-card-text>
+            <v-img
+              max-width="256px"
+              max-height="144px"
+              :aspect-ratio="16 / 9"
+              v-bind:src="'data:image/jpeg;base64,' + item.image"
+            />
 
-            <v-toolbar-title>Displays</v-toolbar-title>
-
-            <v-spacer></v-spacer>
-
-            <!-- <v-btn icon>
-            <v-icon>search</v-icon>
-          </v-btn>
-
-          <v-btn icon>
-            <v-icon>view_module</v-icon>
-          </v-btn> -->
-          </v-toolbar>
-
-          <v-list-tile
-            v-model="selectedDisplay"
-            v-for="item in displays"
-            :key="item.uuid"
-          >
-            <v-list-tile-content @click="selectedDisplay = item">
-              <v-card>
-                <v-card-title>{{ item.name }}</v-card-title>
-                <v-card-text>{{ item.uuid }}</v-card-text>
-              </v-card>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-card>
-      </v-flex>
-
-      <v-flex lg6 offset-lg-1>
-        <v-card v-if="selectedDisplay">
-          <v-img
-            :src="'data:image/jpeg;base64,' + selectedDisplay.image"
-          ></v-img>
-        </v-card>
-      </v-flex>
-    </v-layout>
-  </div>
+            <v-checkbox v-model="inverted" label="inverted"></v-checkbox>
+            <v-btn @click="sendToDisplay(item.uuid)">send</v-btn>
+            <v-btn @click="clearDisplay(item.uuid)">clear</v-btn>
+            <v-btn @click="getCurrentState(item.uuid)">state</v-btn>
+            <v-btn @click="deleteDisplay(item)" variant="danger"
+              >delete</v-btn
+            >
+          </v-card>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </v-row>
 </template>
 
 <script>
@@ -52,7 +35,8 @@ export default {
   data() {
     return {
       state: null,
-      selectedDisplay: null
+      selectedDisplay: null,
+      inverted: false
     };
   },
   computed: {
@@ -83,10 +67,13 @@ export default {
       this.$store.dispatch("deleteTemplate", template);
     },
     sendToDisplay(uuid) {
-      const URL =
-        this.$store.state.URI + "/display/send-to-e-ink-display/" + uuid;
+      const URL = this.$store.state.URI + "/display/send-to-e-ink-display";
+      let params = new FormData();
+      params.append("uuid", uuid);
+      params.append("inverted", this.inverted);
+
       axios
-        .post(URL)
+        .post(URL, params)
         .then()
         .catch(err => {
           // eslint-disable-next-line
