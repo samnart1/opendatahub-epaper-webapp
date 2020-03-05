@@ -52,8 +52,8 @@ export default {
   },
   methods: {
     createDisplay() {
-      const { name, templateUuid } = this;
-      const data = { name, templateUuid };
+      const { name, templateUuid, width, height } = this;
+      const data = { name, templateUuid ,width, height};
 
       this.$store.dispatch("createDisplay", data);
     }
