@@ -1,6 +1,5 @@
 <template>
-  <div class="create">
-    <b-card width="400px" title="Add Location">
+    <b-card title="Add Location">
       <b-card-text>
         <b-form @submit.prevent="createLocation">
           <b-form-input v-model="name" label="Name" placeholder="Enter a name"/>
@@ -12,7 +11,6 @@
       </b-card-text>
        
     </b-card>
-  </div>
 </template>
 
 

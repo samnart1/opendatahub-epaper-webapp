@@ -71,13 +71,6 @@ export default {
   margin-top: 60px;
 }
 
-.create {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 40px;
-}
-
 .content {
   margin-top: 60px;
   margin-bottom: 60px;

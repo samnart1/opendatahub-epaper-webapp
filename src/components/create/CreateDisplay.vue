@@ -1,6 +1,5 @@
 <template>
-  <div class="create">
-    <b-card width="400px" title="Add Display">
+    <b-card title="Add Display">
       <b-card-text>
         <b-form @submit.prevent="createDisplay">
           <b-form-input v-model="name" label="Name" placeholder="Enter a name"/>
@@ -34,7 +33,6 @@
       </b-card-text>
        
     </b-card>
-  </div>
 </template>
 
 <script>

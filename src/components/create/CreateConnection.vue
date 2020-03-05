@@ -1,6 +1,5 @@
 <template>
-  <div class="create">
-    <b-card width="400px" title="Add Connection">
+    <b-card title="Add Connection">
       <b-card-text>
         <b-form @submit.prevent="createConnection">
           <b-form-select
@@ -51,7 +50,6 @@
         </b-form>
       </b-card-text>
     </b-card>
-  </div>
 </template>
 
 <script>
