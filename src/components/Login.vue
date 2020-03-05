@@ -1,6 +1,6 @@
 <template>
-  <div v-on:keyup.enter="login()" >
-    <b-card title="Login" >
+  <div v-on:keyup.enter="login()" class="w-25 mx-auto" >
+    <b-card title="Login"  >
       <b-card-text>
         <b-form-input v-model="input.username" placeholder="username" />
         <b-form-input type="password" v-model="input.password" placeholder="password" />

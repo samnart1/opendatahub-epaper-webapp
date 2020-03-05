@@ -2,7 +2,12 @@
   <div>
     <b-table striped hover :items="displays" :fields="fields">
       <template v-slot:cell(show_details)="row">
-        <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+        <b-button
+          squared
+          variant="info"
+          @click="row.toggleDetails"
+          class="mr-2"
+        >
           {{ row.detailsShowing ? "Hide" : "Show" }} Details
         </b-button>
       </template>
@@ -39,19 +44,35 @@
                     <b-form-checkbox v-model="inverted"
                       >Inverted</b-form-checkbox
                     >
+
                     <b-button
-                      variant="success"
-                      size="sm"
+                      :disabled="isLoading"
+                      squared
+                      variant="primary"
                       @click="sendToDisplay(row.item.uuid)"
-                      >Send Image</b-button
                     >
-                    <b-button @click="clearDisplay(row.item.uuid)"
+                      <b-spinner v-if="isLoading" small></b-spinner>
+                      <span> Send</span></b-button
+                    >
+                    <b-button
+                      squared
+                      variant="primary"
+                      :disabled="isLoading"
+                      @click="clearDisplay(row.item.uuid)"
                       >Clear</b-button
                     >
-                    <b-button @click="getCurrentState(row.item.uuid)"
+                    <b-button
+                      squared
+                      variant="primary"
+                      :disabled="isLoading"
+                      @click="getCurrentState(row.item.uuid)"
                       >State</b-button
                     >
-                    <b-button @click="deleteDisplay(row.item)" variant="danger"
+                    <b-button
+                      squared
+                      variant="danger"
+                      :disabled="isLoading"
+                      @click="deleteDisplay(row.item)"
                       >Delete</b-button
                     >
                   </b-row>
@@ -61,7 +82,7 @@
 
             <b-col>
               <b-img
-              :class="{invertedImage : inverted}"
+                :class="{ invertedImage: inverted }"
                 :width="row.item.resolution.width"
                 :height="row.item.resolution.height"
                 :src="'data:image/jpeg;base64,' + row.item.image"
@@ -83,6 +104,7 @@ export default {
       state: null,
       selectedDisplay: null,
       inverted: false,
+      isLoading: false,
       fields: [
         { key: "name", sortable: true },
         { key: "location", sortable: true },
@@ -125,10 +147,17 @@ export default {
       params.append("uuid", uuid);
       params.append("inverted", this.inverted);
 
+      this.isLoading = true;
+
       axios
         .post(URL, params)
-        .then()
+        .then(response => {
+          this.isLoading = false;
+          // eslint-disable-next-line
+          console.log(response);
+        })
         .catch(err => {
+          this.isLoading = false;
           // eslint-disable-next-line
           console.log(err);
         });
@@ -136,10 +165,18 @@ export default {
     clearDisplay(uuid) {
       const URL =
         this.$store.state.URI + "/display/clear-e-ink-display/" + uuid;
+
+      this.isLoading = true;
+
       axios
         .post(URL)
-        .then()
+        .then(response => {
+          this.isLoading = false;
+          // eslint-disable-next-line
+          console.log(response);
+        })
         .catch(err => {
+          this.isLoading = false;
           // eslint-disable-next-line
           console.log(err);
         });
@@ -147,10 +184,17 @@ export default {
     getCurrentState(uuid) {
       const URL =
         this.$store.state.URI + "/display/get-e-ink-display-state/" + uuid;
+
+      this.isLoading = true;
+
       axios
         .get(URL)
-        .then(response => (this.state = response.data))
+        .then(response => {
+          this.state = response.data;
+          this.isLoading = false;
+        })
         .catch(err => {
+          this.isLoading = false;
           // eslint-disable-next-line
           console.log(err);
         });
@@ -175,7 +219,7 @@ export default {
     getTemplateName(image) {
       var template = this.$store.state.templates.filter(c => c.image === image);
       if (template[0]) return template[0].name;
-      else return "No Image";
+      else return "No Template";
     }
   }
 };
