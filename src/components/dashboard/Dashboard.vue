@@ -1,35 +1,74 @@
 <template>
   <div>
-    <b-table
-      striped
-      hover
-      :items="displays"
-      :fields="[
-        { key: 'name', sortable: true },
-        { key: 'batteryPercentage', sortable: true },
-        { key: 'show_details', sortable: false }
-      ]"
-    >
+    <b-table striped hover :items="displays" :fields="fields">
       <template v-slot:cell(show_details)="row">
         <b-button size="sm" @click="row.toggleDetails" class="mr-2">
-          {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
+          {{ row.detailsShowing ? "Hide" : "Show" }} Details
         </b-button>
       </template>
 
+      <template v-slot:cell(template)="row">
+        <b-col>
+          {{ getTemplateName(row.item.image) }}
+        </b-col>
+      </template>
+
+      <template v-slot:cell(location)="row">
+        <b-col>
+          {{ getLocationName(row.item.uuid) }}
+        </b-col>
+      </template>
+
       <template v-slot:row-details="row">
-        <b-card :img-src="'data:image/jpeg;base64,' + row.item.image">
-          <b-row class="mb-2">
-            <b-col sm="3" class="text-sm-right"><b>Age:</b></b-col>
-            <b-col>{{ row.item.name }}</b-col>
-          </b-row>
+        <b-container>
+          <b-row>
+            <b-col>
+              <b-row>
+                <b-col>
+                  {{ getConnectionIp(row.item.uuid) }}
+                </b-col>
 
-          <b-row class="mb-2">
-            <b-col sm="3" class="text-sm-right"><b>Is Active:</b></b-col>
-            <b-col>{{ row.item.isActive }}</b-col>
-          </b-row>
+                <b-col>
+                  {{ row.item.resolution.width }} x
+                  {{ row.item.resolution.height }}
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col>
+                  <b-row>
+                    <b-form-checkbox v-model="inverted"
+                      >Inverted</b-form-checkbox
+                    >
+                    <b-button
+                      variant="success"
+                      size="sm"
+                      @click="sendToDisplay(row.item.uuid)"
+                      >Send Image</b-button
+                    >
+                    <b-button @click="clearDisplay(row.item.uuid)"
+                      >Clear</b-button
+                    >
+                    <b-button @click="getCurrentState(row.item.uuid)"
+                      >State</b-button
+                    >
+                    <b-button @click="deleteDisplay(row.item)" variant="danger"
+                      >Delete</b-button
+                    >
+                  </b-row>
+                </b-col>
+              </b-row>
+            </b-col>
 
-          <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button>
-        </b-card>
+            <b-col>
+              <b-img
+              :class="{invertedImage : inverted}"
+                :width="row.item.resolution.width"
+                :height="row.item.resolution.height"
+                :src="'data:image/jpeg;base64,' + row.item.image"
+              />
+            </b-col>
+          </b-row>
+        </b-container>
       </template>
     </b-table>
   </div>
@@ -43,7 +82,14 @@ export default {
     return {
       state: null,
       selectedDisplay: null,
-      inverted: false
+      inverted: false,
+      fields: [
+        { key: "name", sortable: true },
+        { key: "location", sortable: true },
+        { key: "template", sortable: true },
+        { key: "batteryPercentage", sortable: true },
+        { key: "show_details", sortable: false }
+      ]
     };
   },
   computed: {
@@ -108,25 +154,35 @@ export default {
           // eslint-disable-next-line
           console.log(err);
         });
+    },
+
+    getConnectionIp(uuid) {
+      var connection = this.$store.state.connections.filter(
+        c => c.displayUuid === uuid
+      );
+      if (connection[0]) return connection[0].networkAddress;
+      else return "No IP";
+    },
+
+    getLocationName(uuid) {
+      var connection = this.$store.state.connections.filter(
+        c => c.displayUuid === uuid
+      );
+      if (connection[0] && connection[0].location)
+        return connection[0].location.name;
+      else return "No Location";
+    },
+    getTemplateName(image) {
+      var template = this.$store.state.templates.filter(c => c.image === image);
+      if (template[0]) return template[0].name;
+      else return "No Image";
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.invertedImage {
+  filter: invert(100%);
 }
 </style>
