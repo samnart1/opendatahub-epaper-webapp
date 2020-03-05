@@ -1,3 +1,4 @@
+ 
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
@@ -24,7 +25,6 @@
             >
           </b-nav>
         </b-card-header>
-
         <b-card-body class="text-center">
           <router-view @authenticated="setAuthenticated" />
         </b-card-body>
@@ -38,18 +38,18 @@ export default {
   name: "app",
   data() {
     return {
-        authenticated: false,
-        mockAccount: {
-            username: "user",
-            password: "pass"
-        }
-    }
-},
+      authenticated: false,
+      mockAccount: {
+        username: "user",
+        password: "pass"
+      }
+    };
+  },
   mounted() {
-    if(!this.authenticated) {
-        this.$router.replace({ name: "login" });
+    if (!this.authenticated) {
+      this.$router.replace({ name: "login" });
     }
-},
+  },
   methods: {
     setAuthenticated(status) {
       this.authenticated = status;
@@ -71,17 +71,10 @@ export default {
   margin-top: 60px;
 }
 
-.create {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 40px;
-}
-
 .content {
   margin-top: 60px;
   margin-bottom: 60px;
-  width: 70%;
-  margin-left: 15%;
+  margin-left: 10%;
+  width: 80%;
 }
 </style>

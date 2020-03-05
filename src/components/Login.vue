@@ -1,43 +1,39 @@
 <template>
-    <div id="login" v-on:keyup.enter="login()">
-        <h1>Login</h1>
-        <input type="text" name="username" v-model="input.username" placeholder="Username" />
-        <input type="password" name="password" v-model="input.password" placeholder="Password" />
-        <button type="button" v-on:click="login()">Login</button>
-    </div>
+  <div v-on:keyup.enter="login()" >
+    <b-card title="Login" >
+      <b-card-text>
+        <b-form-input v-model="input.username" placeholder="username" />
+        <b-form-input type="password" v-model="input.password" placeholder="password" />
+
+        <b-button variant="success" v-on:click="login()">Login</b-button>
+      </b-card-text>
+    </b-card>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: 'Login',
-        data() {
-            return {
-                input: {
-                    username: "",
-                    password: ""
-                }
-            }
-        },
-        methods: {
-            login() {
-                if(this.input.username != "" && this.input.password != "") {
-                    if(this.input.username == this.$parent.mockAccount.username && this.input.password == this.$parent.mockAccount.password) {
-                        this.$emit("authenticated", true);
-                        this.$router.replace({ name: "Dashboard" });
-                    } 
-                } 
-            }
+export default {
+  name: "Login",
+  data() {
+    return {
+      input: {
+        username: null,
+        password: null
+      }
+    };
+  },
+  methods: {
+    login() {
+      if (this.input.username != "" && this.input.password != "") {
+        if (
+          this.input.username == this.$parent.mockAccount.username &&
+          this.input.password == this.$parent.mockAccount.password
+        ) {
+          this.$emit("authenticated", true);
+          this.$router.replace({ name: "Dashboard" });
         }
+      }
     }
+  }
+};
 </script>
-
-<style scoped>
-    #login {
-        width: 500px;
-        border: 1px solid #CCCCCC;
-        background-color: #FFFFFF;
-        margin: auto;
-        margin-top: 200px;
-        padding: 20px;
-    }
-</style>
