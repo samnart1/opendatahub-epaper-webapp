@@ -27,70 +27,90 @@
       <template v-slot:row-details="row">
         <b-container>
           <b-row>
-            <b-col >
+            <b-col>
               <b-row>
                 <b-col> IP {{ getConnectionIp(row.item.uuid) }} </b-col>
 
-                <b-col v-if="row.item.state"> MAC {{  row.item.state.macAddress }} </b-col>
+                <b-col v-if="row.item.state">
+                  MAC {{ row.item.state.macAddress }}
+                </b-col>
               </b-row>
               <b-row>
-                <b-col v-if="row.item.state"> Is Sleeping {{ row.item.state.isSleeping }} </b-col>
+                <b-col v-if="row.item.state">
+                  <span v-if="!row.item.state.isSleeping">Is Sleeping</span>
+                  <span v-if="row.item.state.isSleeping">Is Awake</span>
+                </b-col>
 
-                <b-col v-if="row.item.state"> Has Image {{ row.item.state.hasImage }} </b-col>
+                <b-col v-if="row.item.state">
+                  <span v-if="row.item.state.hasImage">Has Image</span>
+                  <span v-if="!row.item.state.hasImage">Has no Image</span>
+                </b-col>
               </b-row>
               <b-row>
-                <b-col v-if="row.item.state"> Is Sleeping {{ row.item.state.isSleeping }} </b-col>
-
-                <b-col>
+                <b-col v-if="row.item.state">
                   Resolution {{ row.item.resolution.width }} x
                   {{ row.item.resolution.height }}
                 </b-col>
               </b-row>
               <b-row v-if="row.item.state">
-                Last State at {{ row.item.state.lastState | moment("dddd, MMMM Do YYYY, h:mm:ss a")  }} 
+                <b-col>
+                  Last State at
+                  {{
+                    row.item.state.lastState
+                      | moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                  }}
+                </b-col>
               </b-row>
 
-
-              <b-row>
+              <b-row class="buttons">
                 <b-col>
                   <b-row>
-                    <b-form-checkbox v-model="inverted" switch
-                      >Invert</b-form-checkbox
-                    >
-
-                    <b-button
-                      :disabled="$store.state.isLoading"
-                      squared
-                      variant="primary"
-                      @click="sendToDisplay(row.item)"
-                    >
-                      <b-spinner
-                        v-if="$store.state.isLoading"
-                        small
-                      ></b-spinner>
-                      <span> Send</span></b-button
-                    >
-                    <b-button
-                      squared
-                      variant="primary"
-                      :disabled="$store.state.isLoading"
-                      @click="clearDisplay(row.item.uuid)"
-                      >Clear</b-button
-                    >
-                    <b-button
-                      squared
-                      variant="primary"
-                      :disabled="$store.state.isLoading"
-                      @click="getCurrentState(row.item)"
-                      >State</b-button
-                    >
-                    <b-button
-                      squared
-                      variant="danger"
-                      :disabled="$store.state.isLoading"
-                      @click="deleteDisplay(row.item)"
-                      >Delete</b-button
-                    >
+                    <b-col>
+                      <b-form-checkbox v-model="inverted" switch
+                        >Invert</b-form-checkbox
+                      >
+                    </b-col>
+                    <b-col>
+                      <b-button
+                        :disabled="$store.state.isLoading"
+                        squared
+                        variant="primary"
+                        @click="sendToDisplay(row.item)"
+                      >
+                        <b-spinner
+                          v-if="$store.state.isLoading"
+                          small
+                        ></b-spinner>
+                        <span> Send</span></b-button
+                      >
+                    </b-col>
+                    <b-col>
+                      <b-button
+                        squared
+                        variant="primary"
+                        :disabled="$store.state.isLoading"
+                        @click="clearDisplay(row.item.uuid)"
+                        >Clear</b-button
+                      >
+                    </b-col>
+                    <b-col>
+                      <b-button
+                        squared
+                        variant="primary"
+                        :disabled="$store.state.isLoading"
+                        @click="getCurrentState(row.item)"
+                        >State</b-button
+                      >
+                    </b-col>
+                    <b-col>
+                      <b-button
+                        squared
+                        variant="danger"
+                        :disabled="$store.state.isLoading"
+                        @click="deleteDisplay(row.item)"
+                        >Delete</b-button
+                      >
+                    </b-col>
                   </b-row>
                 </b-col>
               </b-row>
@@ -118,7 +138,7 @@ export default {
   data() {
     return {
       selectedDisplay: null,
-      inverted : false,
+      inverted: false,
       fields: [
         { key: "name", sortable: true },
         { key: "location", sortable: true },
@@ -201,7 +221,9 @@ export default {
     },
     getCurrentState(display) {
       const URL =
-        this.$store.state.URI + "/display/get-e-ink-display-state/" + display.uuid;
+        this.$store.state.URI +
+        "/display/get-e-ink-display-state/" +
+        display.uuid;
 
       this.$store.state.isLoading = true;
 
@@ -248,5 +270,9 @@ export default {
 <style scoped>
 .invertedImage {
   filter: invert(100%);
+}
+
+.buttons{
+  margin-top: 10%
 }
 </style>
