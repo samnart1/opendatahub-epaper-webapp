@@ -10,6 +10,7 @@ export default new Vuex.Store({
     locations: [],
     connections: [],
     templates: [],
+    isLoading: false,
     URI: process.env.VUE_APP_API_URL
   },
 
