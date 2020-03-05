@@ -1,31 +1,9 @@
 <template>
-  <v-row justify="center">
-    <v-expansion-panels popout>
-      <v-expansion-panel v-for="(item, i) in displays" :key="i">
-        <v-expansion-panel-header>{{ item.name }}</v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-card>
-            <v-card-title>{{ item.name }}</v-card-title>
-            <v-card-text>{{ item.batteryPercentage }} %</v-card-text>
-            <v-img
-              max-width="256px"
-              max-height="144px"
-              :aspect-ratio="16 / 9"
-              v-bind:src="'data:image/jpeg;base64,' + item.image"
-            />
+  <div>
+    <b-table striped hover :items="displays" :fields="[{key:'name', sortable : true},{key:'batteryPercentage', sortable : true}]">
 
-            <v-checkbox v-model="inverted" label="inverted"></v-checkbox>
-            <v-btn @click="sendToDisplay(item.uuid)">send</v-btn>
-            <v-btn @click="clearDisplay(item.uuid)">clear</v-btn>
-            <v-btn @click="getCurrentState(item.uuid)">state</v-btn>
-            <v-btn @click="deleteDisplay(item)" variant="danger"
-              >delete</v-btn
-            >
-          </v-card>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </v-row>
+    </b-table>
+  </div>
 </template>
 
 <script>

@@ -1,29 +1,26 @@
 <template>
   <div class="create">
-    <v-card width="400px">
-      <v-card-title>
-        Create Template
-      </v-card-title>
-      <v-card-text>
-        <form @submit.prevent="createTemplate">
-          <v-text-field v-model="name" label="Name" required />
-          <v-file-input v-model="image"
-            accept="image/jpeg, image/png, image/bmp "
-            label="Choose a image or drop it here..."
-          ></v-file-input>
-          <v-btn type="submit">
+    <b-card width="400px" title="Add Template">
+      <b-card-text>
+        <b-form @submit.prevent="createTemplate">
+          <b-form-input v-model="name" label="Name" placeholder="Enter a name"/>
+        <b-form-file v-model="image" accept="image/*"></b-form-file>
+         <b-button variant="success" type="submit">
             Add
-          </v-btn>
-        </form>
-      </v-card-text>
-    </v-card>
+          </b-button>
+        </b-form>
+      </b-card-text>
+       
+    </b-card>
   </div>
 </template>
+
+
 <script>
 export default {
   data() {
     return {
-      name: "name",
+      name: null,
       image: null
     };
   },

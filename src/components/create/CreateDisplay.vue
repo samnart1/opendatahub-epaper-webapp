@@ -1,21 +1,39 @@
 <template>
   <div class="create">
-    <v-card width="400px">
-      <v-card-title>
-        Create Display
-      </v-card-title>
-      <v-card-text>
-        <form @submit.prevent="createDisplay">
-          <v-text-field v-model="name" label="Name" required />
-          <v-select required  v-model='templateUuid' :items="templates" item-value='uuid' item-text="name"  return-object>
-       
-          </v-select>
-          <v-btn type="submit">
+    <b-card width="400px" title="Add Display">
+      <b-card-text>
+        <b-form @submit.prevent="createDisplay">
+          <b-form-input v-model="name" label="Name" placeholder="Enter a name"/>
+          <b-form-input
+            v-model="width"
+            type="number"
+            placeholder="Enter screen width"
+          />
+          <b-form-input
+            v-model="height"
+            type="number"
+            placeholder="Enter screen height"
+          />
+          <b-form-select
+            v-model="templateUuid"
+            :options="templates"
+            value-field="uuid"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option :value="null" disabled
+                >Select a template</b-form-select-option
+              >
+            </template>
+          </b-form-select>
+
+         <b-button variant="success" type="submit">
             Add
-          </v-btn>
-        </form>
-      </v-card-text>
-    </v-card>
+          </b-button>
+        </b-form>
+      </b-card-text>
+       
+    </b-card>
   </div>
 </template>
 
@@ -23,30 +41,24 @@
 export default {
   data() {
     return {
-      name: "name",
-      templateUuid: ""
+      name: null,
+      templateUuid: null,
+      width: null,
+      height: null
     };
   },
   computed: {
     templates() {
-      return this.$store.state.templates
+      return this.$store.state.templates;
     }
   },
   methods: {
     createDisplay() {
       const { name, templateUuid } = this;
-      const data = { name,  templateUuid };
+      const data = { name, templateUuid };
 
       this.$store.dispatch("createDisplay", data);
     }
   }
 };
 </script>
-
-<style scoped>
-.create {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>
