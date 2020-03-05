@@ -1,32 +1,34 @@
 <template>
   <div>
-    <UpdateDisplay/>
-    <UpdateLocation/>
-    <UpdateConnection/>
-    <UpdateTemplate/>
+    <b-row>
+      <UpdateDisplay />
+      <UpdateLocation />
+      <UpdateConnection />
+      <UpdateTemplate />
+    </b-row>
   </div>
 </template>
 
 <script>
-import UpdateDisplay from './UpdateDisplay.vue'
-import UpdateLocation from './UpdateLocation.vue'
-import UpdateTemplate from './UpdateTemplate.vue'
-import UpdateConnection from './UpdateConnection.vue'
+import UpdateDisplay from "./UpdateDisplay.vue";
+import UpdateLocation from "./UpdateLocation.vue";
+import UpdateTemplate from "./UpdateTemplate.vue";
+import UpdateConnection from "./UpdateConnection.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     UpdateDisplay,
     UpdateLocation,
     UpdateConnection,
-    UpdateTemplate,
+    UpdateTemplate
   }
-}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -35,10 +37,9 @@ export default {
 }
 
 .create {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 40px
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
 }
-
 </style>
