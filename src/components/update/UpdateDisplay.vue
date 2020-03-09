@@ -1,10 +1,7 @@
 <template>
-  <div class="create">
-    <v-card width="400px">
-      <v-card-title>
-        Update Display
-      </v-card-title>
-      <v-card-text>
+  <b-card title="Edit Display">
+    <b-card-text>
+      <b-form @submit.prevent="updateDisplay">
         <b-form-select v-model="displayUpdated">
           <option :value="null">Select Display</option>
           <option
@@ -14,39 +11,44 @@
             >{{ display.name }}</option
           >
         </b-form-select>
-        <form @submit.prevent="updateDisplay">
-          <v-text-field
-            v-if="displayUpdated"
-            v-model="displayUpdated.name"
-            label="Name"
-            required
-            >{{ displayUpdated.name }}</v-text-field
+
+        <b-form-select v-if="displayUpdated" v-model="templateUuid">
+          <option :value="null">Select Template</option>
+          <option
+            v-for="template in templates"
+            :key="template.uuid"
+            :value="template.uuid"
+            >{{ template.name }}</option
           >
-          <b-form-select v-if="displayUpdated" v-model="templateUuid">
-            <option :value="null">Select Template</option>
-            <option
-              v-for="template in templates"
-              :key="template.uuid"
-              :value="template.uuid"
-              >{{ template.name }}</option
-            >
-          </b-form-select>
-          <v-btn type="submit">
-            Update
-          </v-btn>
-        </form>
-      </v-card-text>
-    </v-card>
-  </div>
+        </b-form-select>
+
+        <b-form-input v-if="displayUpdated" v-model="displayUpdated.name" />
+        <b-form-input  v-if="displayUpdated" 
+          v-model="displayUpdated.resolution.width"
+          type="number"
+          placeholder="Enter screen width"
+        />
+        <b-form-input  v-if="displayUpdated" 
+          v-model="displayUpdated.resolution.height"
+          type="number"
+          placeholder="Enter screen height"
+        />
+
+        <b-button variant="success" type="submit">
+          Edit
+        </b-button>
+      </b-form>
+    </b-card-text>
+  </b-card>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      displayUpdated : null,
-      templateUuid: ""
-    }
+      displayUpdated: null,
+      templateUuid: null
+    };
   },
   computed: {
     displays() {

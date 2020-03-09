@@ -1,26 +1,26 @@
 <template>
-  <div class="create">
-    <v-card width="400px">
-      <v-card-title>
-        Create Location
-      </v-card-title>
-      <v-card-text>
-        <form @submit.prevent="createLocation">
-          <v-text-field v-model="name" label="Name" required />
-          <v-btn type="submit">
+    <b-card title="Add Location">
+      <b-card-text>
+        <b-form @submit.prevent="createLocation">
+          <b-form-input v-model="name" label="Name" placeholder="Enter a name"/>
+        
+         <b-button variant="success" type="submit">
             Add
-          </v-btn>
-        </form>
-      </v-card-text>
-    </v-card>
-  </div>
+          </b-button>
+        </b-form>
+      </b-card-text>
+       
+    </b-card>
 </template>
+
+
+
 <script>
 
 export default {
   data() {
     return {
-      name: "name"
+      name: null
     };
   },
   methods: {

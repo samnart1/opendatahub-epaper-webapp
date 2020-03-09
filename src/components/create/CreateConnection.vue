@@ -1,57 +1,66 @@
 <template>
-  <div class="create">
-    <v-card width="400px">
-      <v-card-title>
-        Create Connection
-      </v-card-title>
-      <v-card-text>
-        <form @submit.prevent="createConnection">
-          <v-text-field v-model="name" label="Name" required />
-          <b-form-select v-model="displayUuid">
-            <option :value="null">Select display</option>
-            <option
-              v-for="display in displays"
-              :key="display.uuid"
-              :value="display.uuid"
-              >{{ display.name }}</option
-            >
+    <b-card title="Add Connection">
+      <b-card-text>
+        <b-form @submit.prevent="createConnection">
+          <b-form-select
+            v-model="displayUuid"
+            :options="displays"
+            value-field="uuid"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option :value="null" disabled
+                >Select a display</b-form-select-option
+              >
+            </template>
           </b-form-select>
-          <b-form-select v-model="locationUuid">
-            <option :value="null">Select location</option>
-            <option
-              v-for="location in locations"
-              :key="location.uuid"
-              :value="location.uuid"
-              >{{ location.name }}</option
-            >
-          </b-form-select>
-          <v-text-field v-model="longitude" label="Longitude" required />
-          <v-text-field v-model="latitude" label="Latitude" required />
-          <!-- <v-text-field v-model="protocol" label="Protocol" required /> -->
-          <v-text-field
-            v-model="networkAddress"
-            label="Network Address"
-            required
-          />
-          <v-btn type="submit">
-            Add
-          </v-btn>
-        </form>
-      </v-card-text>
-    </v-card>
-  </div>
-</template>
-<script>
 
+          <b-form-select
+            v-model="locationUuid"
+            :options="locations"
+            value-field="uuid"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option :value="null" disabled
+                >Select a location</b-form-select-option
+              >
+            </template>
+          </b-form-select>
+
+          <b-form-input
+            v-model="networkAddress"
+            placeholder="Enter the network address"
+          />
+          <b-form-input
+            v-model="latitude"
+            type="number"
+            placeholder="Enter latitude"
+          />
+          <b-form-input
+            v-model="longitude"
+            type="number"
+            label="Height"
+            placeholder="Enter longitude"
+          />
+
+          <b-button variant="success" type="submit">
+            Add
+          </b-button>
+        </b-form>
+      </b-card-text>
+    </b-card>
+</template>
+
+<script>
 export default {
   data() {
     return {
-      name: "name",
-      longitude: "",
-      latitude : "",
-      displayUuid: "",
-      locationUuid: "",
-      networkAddress: "192.168.13",
+      longitude: null,
+      latitude: null,
+      displayUuid: null,
+      locationUuid: null,
+      networkAddress: null
       // protocol: "WLAN"
     };
   },
@@ -67,22 +76,20 @@ export default {
     createConnection() {
       // eslint-disable-next-line
       const {
-        name,
         longitude,
         latitude,
         displayUuid,
         locationUuid,
-        networkAddress,
+        networkAddress
         // protocol
       } = this;
-      
+
       const connection = {
-        name,
         longitude,
         latitude,
         displayUuid,
         locationUuid,
-        networkAddress,
+        networkAddress
         // protocol
       };
       this.$store.dispatch("createConnection", connection);

@@ -1,90 +1,60 @@
 <template>
-  <div class="create">
-    <v-card width="400px">
-      <v-card-title>
-        Update Connection
-      </v-card-title>
-      <v-card-text>
-        <b-form-select v-model="connectionUpdated">
-          <option :value="null">Select Connection</option>
+  <b-card title="Edit Connection">
+    <b-card-text>
+      <b-form-select v-model="connectionUpdated">
+        <option :value="null">Select Connection</option>
+        <option
+          v-for="connection in connections"
+          :key="connection.uuid"
+          :value="connection"
+          >{{ connection.uuid }}</option
+        >
+      </b-form-select>
+      <b-form @submit.prevent="updateConnection">
+        <b-form-input
+          v-if="connectionUpdated"
+          v-model="connectionUpdated.longitude"
+        />
+        <b-form-input
+          v-if="connectionUpdated"
+          v-model="connectionUpdated.latitude"
+        />
+
+        <b-form-input
+          v-if="connectionUpdated"
+          v-model="connectionUpdated.networkAddress"
+        />
+
+        <b-form-select
+          v-if="connectionUpdated"
+          v-model="connectionUpdated.displayUuid"
+        >
           <option
-            v-for="connection in connections"
-            :key="connection.uuid"
-            :value="connection"
-            >{{ connection.name }}</option
+            v-for="display in displays"
+            :key="display.uuid"
+            :value="display.uuid"
+            :selected="display.uuid === connectionUpdated.displayUuid"
+            >{{ display.name }}</option
           >
         </b-form-select>
-        <form @submit.prevent="updateConnection">
-          <v-text-field
-            v-if="connectionUpdated"
-            v-model="connectionUpdated.name"
-            label="Name"
-            required
-            >{{ connectionUpdated.name }}</v-text-field
+        <b-form-select
+          v-if="connectionUpdated"
+          v-model="connectionUpdated.locationUuid"
+        >
+          <option
+            v-for="location in locations"
+            :key="location.uuid"
+            :value="location.uuid"
+            :selected="location.uuid === connectionUpdated.locationUuid"
+            >{{ location.name }}</option
           >
-
-          <v-text-field
-            v-if="connectionUpdated"
-            v-model="connectionUpdated.longitude"
-            label="Longitude"
-            required
-            >{{ connectionUpdated.longitude }}</v-text-field
-          >
-           <v-text-field
-            v-if="connectionUpdated"
-            v-model="connectionUpdated.latitude"
-            label="Latitude"
-            required
-            >{{ connectionUpdated.latitude }}</v-text-field
-          >
-
-          <v-text-field
-            v-if="connectionUpdated"
-            v-model="connectionUpdated.networkAddress"
-            label="Net Adreess"
-            required
-            >{{ connectionUpdated.networkAddress }}</v-text-field
-          >
-
-          <!-- <v-text-field
-            v-if="connectionUpdated"
-            v-model="connectionUpdated.protocol"
-            label="Protocol"
-            required
-            >{{ connectionUpdated.protocol }}</v-text-field
-          > -->
-
-          <b-form-select
-            v-if="connectionUpdated"
-            v-model="connectionUpdated.displayUuid"
-          >
-            <option
-              v-for="display in displays"
-              :key="display.uuid"
-              :value="display.uuid"
-              :selected="display.uuid === connectionUpdated.displayUuid"
-              >{{ display.name }}</option
-            >
-          </b-form-select>
-          <b-form-select
-            v-if="connectionUpdated"
-            v-model="connectionUpdated.locationUuid"
-          >
-            <option
-              v-for="location in locations"
-              :key="location.uuid"
-              :value="location.uuid"
-              :selected="location.uuid === connectionUpdated.locationUuid"
-              >{{ location.name }}</option
-            >
-          </b-form-select>
-          <v-btn type="submit">
-            Update
-          </v-btn>
-        </form>
-      </v-card-text>
-    </v-card>
-  </div>
+        </b-form-select>
+       <b-button variant="success" type="submit">
+          Edit
+        </b-button>
+      </b-form>
+    </b-card-text>
+  </b-card>
 </template>
 
 <script>
@@ -112,11 +82,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.create {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>

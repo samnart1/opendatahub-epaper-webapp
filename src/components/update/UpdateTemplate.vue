@@ -1,12 +1,9 @@
 <template>
-  <div class="create">
-    <v-card width="400px">
-      <v-card-title>
-        Update Template
-      </v-card-title>
-      <v-card-text>
+  <b-card title="Edit Template">
+    <b-card-text>
+      <b-form @submit.prevent="updateTemplate">
         <b-form-select v-model="templateUpdated">
-          <option :value="null">Select Template</option>
+          <option :value="null">Select Display</option>
           <option
             v-for="template in templates"
             :key="template.uuid"
@@ -14,21 +11,14 @@
             >{{ template.name }}</option
           >
         </b-form-select>
-        <form @submit.prevent="updateTemplate">
-          <v-text-field
-            v-if="templateUpdated"
-            v-model="templateUpdated.name"
-            label="Name"
-            required
-            >{{ templateUpdated.name }}</v-text-field
-          >
-          <v-btn type="submit">
-            Update
-          </v-btn>
-        </form>
-      </v-card-text>
-    </v-card>
-  </div>
+        <b-form-input v-if="templateUpdated" v-model="templateUpdated.name" />
+
+        <b-button variant="success" type="submit">
+          Edit
+        </b-button>
+      </b-form>
+    </b-card-text>
+  </b-card>
 </template>
 
 <script>
@@ -51,10 +41,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.create {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>

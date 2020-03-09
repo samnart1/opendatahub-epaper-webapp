@@ -10,6 +10,7 @@ export default new Vuex.Store({
     locations: [],
     connections: [],
     templates: [],
+    isLoading: false,
     URI: process.env.VUE_APP_API_URL
   },
 
@@ -135,6 +136,8 @@ export default new Vuex.Store({
       let formData = new FormData();
       formData.append("name", data.name);
       formData.append("templateUuid", data.templateUuid);
+      formData.append("width", data.width);
+      formData.append("height", data.height);
 
       const URL = this.state.URI + "/display/create";
       axios
