@@ -159,7 +159,9 @@ export default new Vuex.Store({
       formData.append("templateUuid", data.templateUuid);
       formData.append("width", data.width);
       formData.append("height", data.height);
-      formData.append("connectionDto", data.connectionDto)
+      formData.append("locationUuid", data.locationUuid)
+      formData.append("networkAddress", data.networkAddress)
+
 
       const URL = this.state.URI + "/display/simple-create";
       axios

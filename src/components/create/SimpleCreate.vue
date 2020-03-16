@@ -92,8 +92,6 @@ export default {
       width: 640,
       height: 384,
       locationUuid: null,
-      longitude: 0,
-      latitude: 0,
       networkAddress: null
     };
   },
@@ -113,41 +111,15 @@ export default {
         width,
         height,
         locationUuid,
-        latitude,
-        longitude,
         networkAddress
       } = this;
 
       const connectionDto = {
-        longitude,
-        latitude,
-        locationUuid,
-        networkAddress
+        
       };
-      const data = { name, templateUuid, width, height, connectionDto };
+      const data = { name, templateUuid, width, height, connectionDto , locationUuid, networkAddress};
 
-      this.$store.dispatch("createDisplay", data);
-    },
-    createConnection() {
-      // eslint-disable-next-line
-      const {
-        longitude,
-        latitude,
-        displayUuid,
-        locationUuid,
-        networkAddress
-        // protocol
-      } = this;
-
-      const connection = {
-        longitude,
-        latitude,
-        displayUuid,
-        locationUuid,
-        networkAddress
-        // protocol
-      };
-      this.$store.dispatch("createConnection", connection);
+      this.$store.dispatch("simpleCreateDisplay", data);
     }
   }
 };
