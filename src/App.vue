@@ -17,6 +17,9 @@
             <b-nav-item   v-if="authenticated" to="/dashboard" exact exact-active-class="active"
               >Dashboard</b-nav-item
             >
+              <b-nav-item   v-if="authenticated" to="/simple-create" exact exact-active-class="active"
+              >Simple Create</b-nav-item
+            >
             <b-nav-item   v-if="authenticated" to="/create" exact exact-active-class="active"
               >Create</b-nav-item
             >
