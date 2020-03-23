@@ -153,6 +153,30 @@ export default new Vuex.Store({
         });
     },
 
+    simpleCreateDisplay({ commit }, data) {
+      let formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("templateUuid", data.templateUuid);
+      formData.append("width", data.width);
+      formData.append("height", data.height);
+      formData.append("locationUuid", data.locationUuid)
+      formData.append("networkAddress", data.networkAddress)
+
+
+      const URL = this.state.URI + "/display/simple-create";
+      axios
+        .post(URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(response => {
+          commit("ADD_DISPLAY", response.data);
+        })
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+        });
+    },
+
     createLocation({ commit }, location) {
       const URL = this.state.URI + "/location/create";
       axios

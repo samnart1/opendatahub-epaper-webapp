@@ -180,7 +180,7 @@ export default {
       this.$store.dispatch("deleteTemplate", template);
     },
     sendToDisplay(display) {
-      const URL = this.$store.state.URI + "/display/send-to-e-ink-display";
+      const URL = this.$store.state.URI + "/display/send";
       let params = new FormData();
       params.append("uuid", display.uuid);
       params.append("inverted", display.inverted);
@@ -202,7 +202,7 @@ export default {
     },
     clearDisplay(uuid) {
       const URL =
-        this.$store.state.URI + "/display/clear-e-ink-display/" + uuid;
+        this.$store.state.URI + "/display/clear/" + uuid;
 
       this.$store.state.isLoading = true;
 
@@ -222,7 +222,7 @@ export default {
     getCurrentState(display) {
       const URL =
         this.$store.state.URI +
-        "/display/get-e-ink-display-state/" +
+        "/display/state/" +
         display.uuid;
 
       this.$store.state.isLoading = true;
