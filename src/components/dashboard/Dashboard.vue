@@ -29,7 +29,9 @@
           <b-row>
             <b-col>
               <b-row>
-                <b-col> IP {{ getConnectionIp(row.item.uuid) }} </b-col>
+                <b-col> IP in API {{ getConnectionIp(row.item.uuid) }} </b-col>
+                <b-col v-if="row.item.state"> IP on Display {{ row.item.state.ipAddress }} </b-col>
+
 
                 <b-col v-if="row.item.state">
                   MAC {{ row.item.state.macAddress }}
@@ -66,19 +68,19 @@
                 <b-col>
                   <b-row>
                     <b-col>
-                      <b-form-checkbox v-model="inverted" switch
+                      <b-form-checkbox v-model="row.item.inverted" switch v-on:change="invert(row.item)"
                         >Invert</b-form-checkbox
                       >
                     </b-col>
                     <b-col>
                       <b-button
-                        :disabled="$store.state.isLoading"
+                       :disabled="row.item.isLoading"
                         squared
                         variant="primary"
                         @click="sendToDisplay(row.item)"
                       >
                         <b-spinner
-                          v-if="$store.state.isLoading"
+                          v-if="row.item.isLoading"
                           small
                         ></b-spinner>
                         <span> Send</span></b-button
@@ -88,8 +90,8 @@
                       <b-button
                         squared
                         variant="primary"
-                        :disabled="$store.state.isLoading"
-                        @click="clearDisplay(row.item.uuid)"
+                       :disabled="row.item.isLoading"
+                        @click="clearDisplay(row.item)"
                         >Clear</b-button
                       >
                     </b-col>
@@ -97,7 +99,7 @@
                       <b-button
                         squared
                         variant="primary"
-                        :disabled="$store.state.isLoading"
+                        :disabled="row.item.isLoading"
                         @click="getCurrentState(row.item)"
                         >State</b-button
                       >
@@ -106,7 +108,7 @@
                       <b-button
                         squared
                         variant="danger"
-                        :disabled="$store.state.isLoading"
+                        :disabled="row.item.isLoading"
                         @click="deleteDisplay(row.item)"
                         >Delete</b-button
                       >
@@ -118,7 +120,7 @@
 
             <b-col>
               <b-img
-                :class="{ invertedImage: inverted }"
+                :class="{ invertedImage: row.item.inverted }"
                 :width="row.item.resolution.width / 2"
                 :height="row.item.resolution.height / 2"
                 :src="'data:image/jpeg;base64,' + row.item.image"
@@ -138,7 +140,6 @@ export default {
   data() {
     return {
       selectedDisplay: null,
-      inverted: false,
       fields: [
         { key: "name", sortable: true },
         { key: "location", sortable: true },
@@ -150,10 +151,6 @@ export default {
   },
   computed: {
     displays() {
-      //setting the inverted field. Must be saved in API later on
-      this.$store.state.displays.forEach(element => {
-        element.inverted = false;
-      });
       return this.$store.state.displays;
     },
     locations() {
@@ -167,6 +164,9 @@ export default {
     }
   },
   methods: {
+    invert(display){
+      this.$store.dispatch("invert", display);
+    },
     deleteDisplay(display) {
       this.$store.dispatch("deleteDisplay", display);
     },
@@ -185,36 +185,39 @@ export default {
       params.append("uuid", display.uuid);
       params.append("inverted", display.inverted);
 
-      this.$store.state.isLoading = true;
+      this.$store.dispatch("isLoading", [display, true]);
 
       axios
         .post(URL, params)
         .then(response => {
-          this.$store.state.isLoading = false;
+          this.$store.dispatch("isLoading", [display, false]);
+          display.state = response.data;
           // eslint-disable-next-line
           console.log(response);
         })
         .catch(err => {
-          this.$store.state.isLoading = false;
+          this.$store.dispatch("isLoading", [display, false]);
+          display.state = err.data;
           // eslint-disable-next-line
           console.log(err);
         });
     },
-    clearDisplay(uuid) {
+    clearDisplay(display) {
       const URL =
-        this.$store.state.URI + "/display/clear/" + uuid;
+        this.$store.state.URI + "/display/clear/" + display.uuid;
 
-      this.$store.state.isLoading = true;
-
+      this.$store.dispatch("isLoading", [display, true]);
       axios
         .post(URL)
         .then(response => {
-          this.$store.state.isLoading = false;
+          display.state = response.data;
+          this.$store.dispatch("isLoading", [display, false]);
           // eslint-disable-next-line
           console.log(response);
         })
         .catch(err => {
-          this.$store.state.isLoading = false;
+          this.$store.dispatch("isLoading", [display, false]);
+          display.state = err.data;
           // eslint-disable-next-line
           console.log(err);
         });
@@ -225,7 +228,8 @@ export default {
         "/display/state/" +
         display.uuid;
 
-      this.$store.state.isLoading = true;
+      
+      this.$store.dispatch("isLoading", [display, true]);
 
       display.state = {};
 
@@ -233,10 +237,11 @@ export default {
         .get(URL)
         .then(response => {
           display.state = response.data;
-          this.$store.state.isLoading = false;
+         display.isLoading  = false;
         })
         .catch(err => {
-          this.$store.state.isLoading = false;
+          this.$store.dispatch("isLoading", [display, false]);
+          display.state = err.data;
           // eslint-disable-next-line
           console.log(err);
         });

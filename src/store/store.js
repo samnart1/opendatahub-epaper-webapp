@@ -10,7 +10,6 @@ export default new Vuex.Store({
     locations: [],
     connections: [],
     templates: [],
-    isLoading: false,
     URI: process.env.VUE_APP_API_URL
   },
 
@@ -24,6 +23,10 @@ export default new Vuex.Store({
   mutations: {
     SET_DISPLAYS(state, displays) {
       state.displays = displays;
+      state.displays.forEach(display => {
+        display.isLoading = false;
+        display.inverted = false;
+      })
     },
     SET_LOCATIONS(state, locations) {
       state.locations = locations;
@@ -37,6 +40,8 @@ export default new Vuex.Store({
 
     ADD_DISPLAY(state, display) {
       state.displays.push(display);
+      display.isLoading = false;
+      display.inverted = false;
     },
     ADD_LOCATION(state, location) {
       state.locations.push(location);
@@ -113,6 +118,19 @@ export default new Vuex.Store({
       if (index > -1) {
         state.connections[index] = updatedConnection;
       }
+    },
+
+    INVERT (state, display) {
+      var index = state.displays.indexOf(display);
+      if (index > -1) {
+        state.displays[index].inverted = !state.displays[index].inverted
+      }
+    },
+    IS_LOADING (state, [display, value]) {
+      var index = state.displays.indexOf(display);
+      if (index > -1) {
+        state.displays[index].isLoading = value
+      }
     }
   },
 
@@ -152,7 +170,7 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-
+    
     simpleCreateDisplay({ commit }, data) {
       let formData = new FormData();
       formData.append("name", data.name);
@@ -310,6 +328,14 @@ export default new Vuex.Store({
           // eslint-disable-next-line
           console.log(err);
         });
+    },
+
+    invert({ commit }, display) {
+      commit("INVERT", display)
+    },
+
+    isLoading({ commit }, [display, value]) {
+      commit("IS_LOADING", [display, value])
     }
   }
 });
