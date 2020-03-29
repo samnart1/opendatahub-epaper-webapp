@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table striped hover :items="displays" :fields="fields">
+    <b-table striped hover head-variant="dark" :items="displays" :fields="fields" >
       <template v-slot:cell(show_details)="row">
         <b-button
           squared
@@ -68,7 +68,7 @@
                 <b-col>
                   <b-row>
                     <b-col>
-                      <b-form-checkbox v-model="row.item.inverted" switch v-on:change="invert(row.item)"
+                      <b-form-checkbox :disabled="row.item.isLoading" v-model="row.item.inverted" switch v-on:change="invert(row.item)"
                         >Invert</b-form-checkbox
                       >
                     </b-col>
@@ -120,7 +120,7 @@
 
             <b-col>
               <b-img
-                :class="{ invertedImage: row.item.inverted }"
+                :class="{ 'invertedImage': row.item.inverted }"
                 :width="row.item.resolution.width / 2"
                 :height="row.item.resolution.height / 2"
                 :src="'data:image/jpeg;base64,' + row.item.image"
@@ -132,6 +132,7 @@
     </b-table>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";
@@ -231,13 +232,11 @@ export default {
       
       this.$store.dispatch("isLoading", [display, true]);
 
-      display.state = {};
-
       axios
         .get(URL)
         .then(response => {
           display.state = response.data;
-         display.isLoading  = false;
+        this.$store.dispatch("isLoading", [display, false]);
         })
         .catch(err => {
           this.$store.dispatch("isLoading", [display, false]);

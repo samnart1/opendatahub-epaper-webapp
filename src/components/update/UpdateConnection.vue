@@ -7,7 +7,7 @@
           v-for="connection in connections"
           :key="connection.uuid"
           :value="connection"
-          >{{ connection.uuid }}</option
+          >{{ getLocationName(connection) }} - {{ getDisplayName(connection) }}</option
         >
       </b-form-select>
       <b-form @submit.prevent="updateConnection">
@@ -78,6 +78,14 @@ export default {
   methods: {
     updateConnection() {
       this.$store.dispatch("updateConnection", this.connectionUpdated);
+    },
+
+    getDisplayName(connection){
+      return this.displays.filter(display => display.uuid == connection.displayUuid)[0].name;
+    },
+
+    getLocationName(connection){
+      return this.locations.filter(location => location.uuid == connection.locationUuid)[0].name;
     }
   }
 };

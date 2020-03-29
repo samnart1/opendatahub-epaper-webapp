@@ -122,6 +122,7 @@ export default new Vuex.Store({
 
     INVERT (state, display) {
       var index = state.displays.indexOf(display);
+      Vue.set(state.displays, index, display)
       if (index > -1) {
         state.displays[index].inverted = !state.displays[index].inverted
       }
@@ -131,6 +132,7 @@ export default new Vuex.Store({
       if (index > -1) {
         state.displays[index].isLoading = value
       }
+      Vue.set(state.displays, index, display)
     }
   },
 
