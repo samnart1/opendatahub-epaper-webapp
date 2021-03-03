@@ -56,8 +56,8 @@
 export default {
   data() {
     return {
-      longitude: null,
-      latitude: null,
+      longitude: 0,
+      latitude: 0,
       displayUuid: null,
       locationUuid: null,
       networkAddress: null

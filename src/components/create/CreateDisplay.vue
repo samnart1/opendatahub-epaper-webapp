@@ -41,8 +41,8 @@ export default {
     return {
       name: null,
       templateUuid: null,
-      width: null,
-      height: null
+      width: 640,
+      height: 384
     };
   },
   computed: {
