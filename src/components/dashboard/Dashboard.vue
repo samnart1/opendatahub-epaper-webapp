@@ -20,7 +20,7 @@
 
       <template v-slot:cell(template)="row">
         <b-col>
-          {{ getTemplateName(row.item.image) }}
+          {{ row.item.template.name }}
         </b-col>
       </template>
 
@@ -36,32 +36,16 @@
             <b-col>
               <b-row>
                 <b-col> IP {{ getConnectionIp(row.item.uuid) }} </b-col>
-                <b-col> MAC {{ getConnectionMAC(row.item.uuid) }} </b-col>
-                <b-col> Is connected {{ isConnected(row.item.uuid) }} </b-col>
-
-                <b-col v-if="row.item.state">
-                  MAC {{ row.item.state.macAddress }}
-                </b-col>
               </b-row>
               <b-row>
                 <b-col v-if="row.item.state">
                   <span v-if="!row.item.state.isSleeping">Is Sleeping</span>
                   <span v-if="row.item.state.isSleeping">Is Awake</span>
                 </b-col>
-
-                <b-col v-if="row.item.state">
-                  <span v-if="row.item.state.errorMessage">{{row.item.state.errorMessage}}</span>
-                </b-col>
-
-                <b-col v-if="row.item.state">
-                  <span v-if="row.item.state.hasImage">Has Image</span>
-                  <span v-if="!row.item.state.hasImage">Has no Image</span>
-                </b-col>
               </b-row>
               <b-row>
                 <b-col v-if="row.item.state">
-                  Resolution {{ row.item.resolution.width }} x
-                  {{ row.item.resolution.height }}
+                  Resolution {{ row.item.resolution.width }} x {{ row.item.resolution.height }}
                 </b-col>
               </b-row>
               <b-row v-if="row.item.state">
@@ -78,13 +62,13 @@
                 <b-col>
                   <b-row>
                     <b-col>
-                      <b-form-checkbox
+                      <!--b-form-checkbox
                         :disabled="row.item.isLoading"
                         v-model="row.item.inverted"
                         switch
                         v-on:change="invert(row.item)"
                         >Invert</b-form-checkbox
-                      >
+                      -->
                     </b-col>
                     <b-col>
                       <b-button
@@ -131,10 +115,11 @@
 
             <b-col>
               <b-img
+                style="border: 2px solid black; border-radius: 5px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
                 :class="{ invertedImage: row.item.inverted }"
                 :width="row.item.resolution.width / 2"
                 :height="row.item.resolution.height / 2"
-                :src="'data:image/jpeg;base64,' + row.item.image"
+                :src="'data:image/jpeg;base64,' + row.item.template.image"
               />
             </b-col>
           </b-row>
@@ -155,7 +140,7 @@ export default {
         { key: "name", sortable: true },
         { key: "location", sortable: true },
         { key: "template", sortable: true },
-        { key: "batteryPercentage", sortable: true },
+        //{ key: "batteryPercentage", sortable: true },
         { key: "show_details", sortable: false }
       ]
     };
@@ -284,6 +269,7 @@ export default {
       else return "No Location";
     },
     getTemplateName(image) {
+      // console.log(row.item)
       var template = this.$store.state.templates.filter(c => c.image === image);
       if (template[0]) return template[0].name;
       else return "No Template";
