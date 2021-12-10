@@ -4,7 +4,7 @@
       striped
       hover
       head-variant="dark"
-      :items="displays"
+      :items="formatDisplayRows"
       :fields="fields"
     >
       <template v-slot:cell(show_details)="row">
@@ -36,6 +36,8 @@
             <b-col>
               <b-row>
                 <b-col> IP {{ getConnectionIp(row.item.uuid) }} </b-col>
+                <b-col> Battery: {{ row.item.batteryPercentage }}% </b-col>
+                <b-col v-if="row.item.errorMessage" class="errorMessage"> Error: {{ row.item.errorMessage }} </b-col>
               </b-row>
               <b-row>
                 <b-col v-if="row.item.state">
@@ -140,10 +142,12 @@ export default {
         { key: "name", sortable: true },
         { key: "location", sortable: true },
         { key: "template", sortable: true },
-        //{ key: "batteryPercentage", sortable: true },
         { key: "show_details", sortable: false }
       ]
     };
+  },
+  created() {
+      this.LOW_BATTERY_THRESHOLD = 5;
   },
   computed: {
     displays() {
@@ -157,6 +161,16 @@ export default {
     },
     templates() {
       return this.$store.state.templates;
+    },
+    formatDisplayRows() {
+      if (!this.displays) return []
+      return this.displays.map(item => {
+        if (item.errorMessage)
+          item._rowVariant = 'danger';
+        else if (item.batteryPercentage <= this.LOW_BATTERY_THRESHOLD)
+          item._rowVariant = 'warning';
+        return item;
+      })
     }
   },
   methods: {
@@ -286,4 +300,9 @@ export default {
 .buttons {
   margin-top: 10%;
 }
+
+.errorMessage {
+  color: red
+}
+
 </style>
