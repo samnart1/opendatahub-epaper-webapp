@@ -5,6 +5,8 @@ import Login from "@/components/Login.vue";
 import Create from "@/components/create/Create.vue";
 import Update from "@/components/update/Update.vue";
 import SimpleCreate from "@/components/create/SimpleCreate";
+import Locations from "@/components/locations/Locations.vue";
+import CreateLocation from "@/components/locations/CreateLocation.vue";
 
 Vue.use(Router);
 
@@ -40,6 +42,16 @@ export default new Router({
       path: "/dashboard",
       name: "Dashboard",
       component: Dashboard
+    },
+    {
+      path: "/locations",
+      name: "Locations",
+      component: Locations
+    },
+    {
+      path: "/create-location",
+      name: "Create Location",
+      component: CreateLocation
     }
   ]
 });

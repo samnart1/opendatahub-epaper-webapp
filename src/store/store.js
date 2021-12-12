@@ -17,7 +17,8 @@ export default new Vuex.Store({
     displays: state => state.displays,
     locations: state => state.locations,
     connections: state => state.connections,
-    templates: state => state.templates
+    templates: state => state.templates,
+    rooms: state => state.rooms
   },
 
   mutations: {
@@ -36,6 +37,9 @@ export default new Vuex.Store({
     },
     SET_TEMPLATES(state, templates) {
       state.templates = templates;
+    },
+    SET_ROOMS(state, rooms) {
+      state.rooms = rooms;
     },
 
     ADD_DISPLAY(state, display) {
@@ -150,6 +154,9 @@ export default new Vuex.Store({
       axios
         .get(this.state.URI + `/template/all`)
         .then(response => commit("SET_TEMPLATES", response.data));
+      axios
+        .get(this.state.URI + `/NOI-Place/all`)
+        .then(response => commit("SET_ROOMS", response.data));
     },
 
     createDisplay({ commit }, data) {
