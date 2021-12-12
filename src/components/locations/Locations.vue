@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button variant="success" to="/create-location">
+    <b-button variant="success" to="/location-form" class="mb-2">
       Add location
     </b-button>
     <b-table
@@ -39,7 +39,7 @@
         <b-button
           squared
           variant="warning"
-          @click="row.toggleDetails"
+          @click="editLocation(row.item)"
           class="mr-2"
         >
           Edit
@@ -47,7 +47,7 @@
         <b-button
           squared
           variant="danger"
-          @click="row.toggleDetails"
+          @click="deleteLocation(row.item)"
           class="mr-2"
         >
           Delete
@@ -79,6 +79,24 @@ export default {
     getRoomName(code) {
       if (code)
         return this.$store.state.rooms.find(r => r.code === code).name;
+    },
+    editLocation(location) {
+      if (location) {
+        let formProps = {
+          editMode: true,
+          locationId: location.uuid,
+          initialName: location.name,
+          initialDescription: location.description,
+          initialRoomCode: location.roomCode
+        };
+        this.$router.push({ name: 'Location Form', params: formProps });
+      }
+    },
+    deleteLocation(location) {
+      this.$bvModal.msgBoxConfirm(`Are you sure you want to delete this location (${location.name}) ?`).then((okPressed) => {
+        if (okPressed)
+          this.$store.dispatch('deleteLocation', location);
+      })
     }
   }
 };
