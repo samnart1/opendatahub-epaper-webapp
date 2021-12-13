@@ -4,7 +4,7 @@
         <b-form @submit.prevent="submitLocation">
           <b-form-input v-model="name" label="Name" placeholder="Enter a name"/>
           <b-form-input v-model="description" label="Description" placeholder="Enter a description"/>
-          <b-form-select v-model="roomCode" :options="rooms"></b-form-select>
+          <b-form-select v-model="roomCode" value-field="code" text-field="name" :options="rooms"></b-form-select>
           <b-button variant="success" type="submit">
             Save
           </b-button>
@@ -32,12 +32,7 @@ export default {
   },
   computed: {
     rooms() {
-      return this.$store.state.rooms.map(room => {
-        return {
-          text: room.name,
-          value: room.code
-        }
-      });
+      return this.$store.state.rooms;
     },
     pageTitle() {
       return this.editMode ? 'Edit location' : 'Add location';
