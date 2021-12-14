@@ -25,6 +25,18 @@
               >
             </template>
           </b-form-select>
+          <b-form-select
+            v-model="locationUuid"
+            :options="locations"
+            value-field="uuid"
+            text-field="name"
+          >
+            <template v-slot:first>
+              <b-form-select-option :value="null" disabled
+                >Select location...</b-form-select-option
+              >
+            </template>
+          </b-form-select>
 
          <b-button variant="success" type="submit">
             Add
@@ -41,6 +53,7 @@ export default {
     return {
       name: null,
       templateUuid: null,
+      locationUuid: null,
       width: 640,
       height: 384
     };
@@ -48,12 +61,15 @@ export default {
   computed: {
     templates() {
       return this.$store.state.templates;
+    },
+    locations() {
+      return this.$store.state.locations;
     }
   },
   methods: {
     createDisplay() {
-      const { name, templateUuid, width, height } = this;
-      const data = { name, templateUuid ,width, height};
+      const { name, templateUuid, width, height, locationUuid } = this;
+      const data = { name, templateUuid ,width, height, locationUuid };
 
       this.$store.dispatch("createDisplay", data);
     }
