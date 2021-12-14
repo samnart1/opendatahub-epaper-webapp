@@ -78,7 +78,7 @@ export default {
   methods: {
     getRoomName(code) {
       if (code)
-        return this.$store.state.rooms.find(r => r.code === code).name;
+        return this.$store.state.rooms.find(r => r.code === code)?.name;
     },
     editLocation(location) {
       if (location) {
