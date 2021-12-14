@@ -17,7 +17,8 @@ export default new Vuex.Store({
     displays: state => state.displays,
     locations: state => state.locations,
     connections: state => state.connections,
-    templates: state => state.templates
+    templates: state => state.templates,
+    rooms: state => state.rooms
   },
 
   mutations: {
@@ -36,6 +37,14 @@ export default new Vuex.Store({
     },
     SET_TEMPLATES(state, templates) {
       state.templates = templates;
+    },
+    SET_ROOMS(state, rooms) {
+      state.rooms = rooms.map((room) => {
+        return {
+          name: room.name ? `${room.name} (${room.label})` : room.label,
+          code: room.code,
+        };
+      });
     },
 
     ADD_DISPLAY(state, display) {
@@ -120,14 +129,14 @@ export default new Vuex.Store({
       }
     },
 
-    INVERT (state, display) {
+    INVERT(state, display) {
       var index = state.displays.indexOf(display);
       Vue.set(state.displays, index, display)
       if (index > -1) {
         state.displays[index].inverted = !state.displays[index].inverted
       }
     },
-    IS_LOADING (state, [display, value]) {
+    IS_LOADING(state, [display, value]) {
       var index = state.displays.indexOf(display);
       if (index > -1) {
         state.displays[index].isLoading = value
@@ -150,6 +159,9 @@ export default new Vuex.Store({
       axios
         .get(this.state.URI + `/template/all`)
         .then(response => commit("SET_TEMPLATES", response.data));
+      axios
+        .get(this.state.URI + `/NOI-Place/all`)
+        .then(response => commit("SET_ROOMS", response.data));
     },
 
     createDisplay({ commit }, data) {
@@ -172,7 +184,7 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-    
+
     simpleCreateDisplay({ commit }, data) {
       let formData = new FormData();
       formData.append("name", data.name);
