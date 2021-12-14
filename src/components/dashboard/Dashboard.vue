@@ -26,7 +26,7 @@
 
       <template v-slot:cell(location)="row">
         <b-col>
-          {{ getLocationName(row.item.uuid) }}
+          {{ getLocationName(row.item.locationUuid) }}
         </b-col>
       </template>
 
@@ -275,11 +275,11 @@ export default {
     },
 
     getLocationName(uuid) {
-      var connection = this.$store.state.connections.filter(
-        c => c.displayUuid === uuid
+      let location = this.$store.state.locations.find(
+        l => l.uuid === uuid
       );
-      if (connection[0] && connection[0].location)
-        return connection[0].location.name;
+      if (location)
+        return location.name;
       else return "No Location";
     },
     getTemplateName(image) {
