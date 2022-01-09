@@ -133,7 +133,7 @@
             <b-tab title="Content">
             </b-tab>
             <b-tab title="Scheduler">
-              <DisplaySchedule :scheduled-content="row.item.scheduledContent" />
+              <DisplaySchedule lazy :scheduled-content="row.item.scheduledContent" :display-uuid="row.item.uuid" />
             </b-tab>
           </b-tabs>
 
