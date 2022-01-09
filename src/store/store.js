@@ -10,6 +10,7 @@ export default new Vuex.Store({
     locations: [],
     connections: [],
     templates: [],
+    displaySchedules: {},
     URI: process.env.VUE_APP_API_URL
   },
 
@@ -18,7 +19,8 @@ export default new Vuex.Store({
     locations: state => state.locations,
     connections: state => state.connections,
     templates: state => state.templates,
-    rooms: state => state.rooms
+    rooms: state => state.rooms,
+    displaySchedules: state => state.displaySchedules
   },
 
   mutations: {
@@ -46,6 +48,9 @@ export default new Vuex.Store({
         };
       });
     },
+    SET_DISPLAY_SCHEDULE(state, {schedule, displayUuid}) {
+      Vue.set(state.displaySchedules, displayUuid, schedule);
+    },
 
     ADD_DISPLAY(state, display) {
       state.displays.push(display);
@@ -61,6 +66,15 @@ export default new Vuex.Store({
     ADD_TEMPLATE(state, template) {
       state.templates.push(template);
     },
+    ADD_DISPLAY_SCHEDULE(state, schedule) {
+      if (!state.displaySchedules[schedule.displayUuid]) {
+        Vue.set(state.displaySchedules, schedule.displayUuid, []);
+      }
+      // eslint-disable-next-line no-console
+      console.log(schedule);
+      state.displaySchedules[schedule.displayUuid].push(schedule);
+    },
+
 
     DELETE_DISPLAY(state, display) {
       var index = state.displays.indexOf(display);
@@ -84,6 +98,12 @@ export default new Vuex.Store({
       var index = state.templates.indexOf(template);
       if (index > -1) {
         state.templates.splice(index, 1);
+      }
+    },
+    DELETE_DISPLAY_SCHEDULE(state, schedule) {
+      var index = state.displaySchedules[schedule.displayUuid].indexOf(schedule);
+      if (index > -1) {
+        state.displaySchedules[schedule.displayUuid].splice(index, 1);
       }
     },
 
@@ -128,6 +148,24 @@ export default new Vuex.Store({
         state.connections[index] = updatedConnection;
       }
     },
+    UPDATE_DISPLAY_SCHEDULE(state, updatedSchedule) {
+      //In case of first edit there is no uuid on schedule, so we have to find edited schedule by event ID instead
+      const idField = updatedSchedule.uuid ? "uuid" : "eventId";
+
+      let index = state.displaySchedules[updatedSchedule.displayUuid].indexOf(
+        state.displaySchedules[updatedSchedule.displayUuid].filter(schedule => schedule[idField] == updatedSchedule[idField])[0]
+      );
+      if (index > -1) {
+        let targetSchedule = state.displaySchedules[updatedSchedule.displayUuid][index]
+
+        //Need to preserve original event information
+        updatedSchedule.originalStartDate = targetSchedule.originalStartDate;
+        updatedSchedule.originalEndDate = targetSchedule.originalEndDate;
+        updatedSchedule.originalEventDescription = targetSchedule.originalEventDescription;
+
+        Vue.set(state.displaySchedules[updatedSchedule.displayUuid], index, updatedSchedule);
+      }
+    },
 
     INVERT(state, display) {
       var index = state.displays.indexOf(display);
@@ -162,6 +200,12 @@ export default new Vuex.Store({
       axios
         .get(this.state.URI + `/NOI-Place/all`)
         .then(response => commit("SET_ROOMS", response.data));
+    },
+
+    loadDisplaySchedule({ commit }, displayUuid) {
+      axios
+        .get(this.state.URI + `/ScheduledContent/all?displayUuid=${displayUuid}`)
+        .then(response => commit("SET_DISPLAY_SCHEDULE", { schedule: response.data, displayUuid }));
     },
 
     createDisplay({ commit }, data) {
@@ -255,6 +299,19 @@ export default new Vuex.Store({
         });
     },
 
+    createDisplaySchedule({ commit }, schedule) {
+      const URL = this.state.URI + "/ScheduledContent/create";
+      axios
+        .post(URL, schedule)
+        .then(response => {
+          commit("ADD_DISPLAY_SCHEDULE", response.data);
+        })
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+        });
+    },
+
     deleteDisplay({ commit }, display) {
       const URL = this.state.URI + "/display/delete/" + display.uuid;
       axios
@@ -293,6 +350,17 @@ export default new Vuex.Store({
       axios
         .delete(URL)
         .then(commit("DELETE_TEMPLATE", template))
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+        });
+    },
+
+    deleteDisplaySchedule({ commit }, schedule) {
+      const URL = this.state.URI + "/ScheduledContent/delete/" + schedule.uuid;
+      axios
+        .delete(URL)
+        .then(() => commit("DELETE_DISPLAY_SCHEDULE", schedule))
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
@@ -339,6 +407,17 @@ export default new Vuex.Store({
       axios
         .put(URL, connection)
         .then(commit("UPDATE_CONNECTION", connection))
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+        });
+    },
+
+    updateDisplaySchedule({ commit }, schedule) {
+      const URL = this.state.URI + "/ScheduledContent/update";
+      axios
+        .put(URL, schedule)
+        .then(() => commit("UPDATE_DISPLAY_SCHEDULE", schedule))
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
