@@ -134,7 +134,7 @@ export default new Vuex.Store({
         )[0]
       );
       if (index > -1) {
-        state.templates[index] = updatedTemplate;
+        Vue.set(state.templates, index, updatedTemplate);
       }
     },
 
@@ -283,13 +283,11 @@ export default new Vuex.Store({
     createTemplate({ commit }, data) {
       const URL = this.state.URI + "/template/create";
       let formData = new FormData();
-      formData.append("name", data.name);
+      formData.append("template", JSON.stringify(data.template));
       formData.append("image", data.image);
 
       axios
-        .post(URL, formData, {
-          headers: { "Content-Type": "multipart/form-data" }
-        })
+        .post(URL, formData)
         .then(response => {
           commit("ADD_TEMPLATE", response.data);
         })
@@ -391,11 +389,16 @@ export default new Vuex.Store({
         });
     },
 
-    updateTemplate({ commit }, template) {
-      const URL = this.state.URI + "/template/update";
+    updateTemplate({ commit }, data) {
+      const URL = this.state.URI + "/template/create";
+
+      let formData = new FormData();
+      formData.append("template", JSON.stringify(data.template));
+      formData.append("image", data.image);
+
       axios
-        .put(URL, template)
-        .then(commit("UPDATE_TEMPLATE", template))
+        .post(URL, formData)
+        .then(() => commit("UPDATE_TEMPLATE", data.template))
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);

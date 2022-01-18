@@ -7,6 +7,8 @@ import Update from "@/components/update/Update.vue";
 import SimpleCreate from "@/components/create/SimpleCreate";
 import Locations from "@/components/locations/Locations.vue";
 import LocationForm from "@/components/locations/LocationForm.vue";
+import Templates from "@/components/templates/Templates.vue";
+import TemplateForm from "@/components/templates/TemplateForm.vue";
 
 Vue.use(Router);
 
@@ -53,6 +55,17 @@ export default new Router({
       name: "Location Form",
       component: LocationForm,
       props: true
-    }
+    },
+    {
+      path: "/templates",
+      name: "Templates",
+      component: Templates
+    },
+    {
+      path: "/template-form",
+      name: "Template Form",
+      component: TemplateForm,
+      props: true
+    },
   ]
 });
