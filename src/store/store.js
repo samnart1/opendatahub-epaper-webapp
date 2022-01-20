@@ -312,19 +312,6 @@ export default new Vuex.Store({
         });
     },
 
-    createDisplaySchedule({ commit }, schedule) {
-      const URL = this.state.URI + "/ScheduledContent/create";
-      axios
-        .post(URL, schedule)
-        .then(response => {
-          commit("ADD_DISPLAY_SCHEDULE", response.data);
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
-        });
-    },
-
     deleteDisplay({ commit }, display) {
       const URL = this.state.URI + "/display/delete/" + display.uuid;
       axios
@@ -370,17 +357,6 @@ export default new Vuex.Store({
           // eslint-disable-next-line
           console.log(err);
           return Promise.reject();
-        });
-    },
-
-    deleteDisplaySchedule({ commit }, schedule) {
-      const URL = this.state.URI + "/ScheduledContent/delete/" + schedule.uuid;
-      axios
-        .delete(URL)
-        .then(() => commit("DELETE_DISPLAY_SCHEDULE", schedule))
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
         });
     },
 
