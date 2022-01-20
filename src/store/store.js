@@ -286,14 +286,16 @@ export default new Vuex.Store({
       formData.append("template", JSON.stringify(data.template));
       formData.append("image", data.image);
 
-      axios
+      return axios
         .post(URL, formData)
         .then(response => {
           commit("ADD_TEMPLATE", response.data);
+          return Promise.resolve();
         })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject();
         });
     },
 
@@ -345,12 +347,16 @@ export default new Vuex.Store({
 
     deleteTemplate({ commit }, template) {
       const URL = this.state.URI + "/template/delete/" + template.uuid;
-      axios
+      return axios
         .delete(URL)
-        .then(commit("DELETE_TEMPLATE", template))
+        .then(() => {
+          commit("DELETE_TEMPLATE", template);
+          return Promise.resolve();
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject();
         });
     },
 
@@ -396,12 +402,16 @@ export default new Vuex.Store({
       formData.append("template", JSON.stringify(data.template));
       formData.append("image", data.image);
 
-      axios
+      return axios
         .post(URL, formData)
-        .then(() => commit("UPDATE_TEMPLATE", data.template))
+        .then(() => {
+          commit("UPDATE_TEMPLATE", data.template);
+          return Promise.resolve();
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject();
         });
     },
 

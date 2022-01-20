@@ -27,7 +27,7 @@
           @click="row.toggleDetails"
           class="mr-2"
         >
-          {{ row.detailsShowing ? "Hide" : "Show" }} Details
+          {{ row.detailsShowing ? "Hide" : "Show" }} content
         </b-button>
         <b-button
           squared
@@ -46,11 +46,22 @@
           Delete
         </b-button>
       </template>
+      <template v-slot:row-details="row">
+        <b-img
+          :src="`${apiUrl}/template/getImage/${
+            row.item.uuid
+          }?withTextFields=true&x=${Date.now()}`"
+          fluid
+          alt="Cannot load preview"
+        ></b-img>
+      </template>
     </b-table>
   </div>
 </template>
 
 <script>
+import toastPresets from "@/utils/toastPresets.js";
+
 export default {
   data() {
     return {
@@ -64,6 +75,9 @@ export default {
   computed: {
     templates() {
       return this.$store.state.templates;
+    },
+    apiUrl() {
+      return this.$store.state.URI;
     },
   },
   methods: {
@@ -89,7 +103,13 @@ export default {
           `Are you sure you want to delete this template (${template.name}) ?`
         )
         .then((okPressed) => {
-          if (okPressed) this.$store.dispatch("deleteTemplate", template);
+          if (okPressed)
+            this.$store.dispatch("deleteTemplate", template).catch(() => {
+              this.$bvToast.toast(
+                "Failed to delete template",
+                toastPresets.errorMessage
+              );
+            });
         });
     },
   },
