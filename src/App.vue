@@ -20,14 +20,8 @@
             <b-nav-item  v-if="authenticated" to="/locations" exact exact-active-class="active"
               >Locations</b-nav-item
             >
-            <b-nav-item   v-if="authenticated" to="/simple-create" exact exact-active-class="active"
-              >Simple Create</b-nav-item
-            >
-            <b-nav-item   v-if="authenticated" to="/create" exact exact-active-class="active"
-              >Create</b-nav-item
-            >
-            <b-nav-item  v-if="authenticated" to="/update" exact exact-active-class="active"
-              >Edit</b-nav-item
+            <b-nav-item   v-if="authenticated" to="/templates" exact exact-active-class="active"
+              >Templates</b-nav-item
             >
           </b-nav>
         </b-card-header>
