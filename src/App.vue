@@ -14,8 +14,8 @@
               replace
               >Logout</b-nav-item
             >
-            <b-nav-item   v-if="authenticated" to="/dashboard" exact exact-active-class="active"
-              >Dashboard</b-nav-item
+            <b-nav-item   v-if="authenticated" to="/displays" exact exact-active-class="active"
+              >Displays</b-nav-item
             >
             <b-nav-item  v-if="authenticated" to="/locations" exact exact-active-class="active"
               >Locations</b-nav-item

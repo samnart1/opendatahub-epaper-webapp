@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Dashboard from "@/components/dashboard/Dashboard.vue";
+import Displays from "@/components/displays/Displays.vue";
 import Login from "@/components/Login.vue";
 import Create from "@/components/create/Create.vue";
 import Update from "@/components/update/Update.vue";
@@ -41,9 +41,9 @@ export default new Router({
       component: Update
     },
     {
-      path: "/dashboard",
-      name: "Dashboard",
-      component: Dashboard
+      path: "/displays",
+      name: "Displays",
+      component: Displays
     },
     {
       path: "/locations",

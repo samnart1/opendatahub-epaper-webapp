@@ -30,7 +30,7 @@ export default {
           this.input.password == this.$parent.mockAccount.password
         ) {
           this.$emit("authenticated", true);
-          this.$router.replace({ name: "Dashboard" });
+          this.$router.replace({ name: "Displays" });
         }
       }
     }
