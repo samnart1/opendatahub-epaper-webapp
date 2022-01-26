@@ -13,83 +13,20 @@
             label="Description"
             placeholder="Enter a description"
           />
-          <b-form-file
-            v-model="image"
-            @input="onPictureUpload"
-            accept="image/*"
-          ></b-form-file>
+          <b-form-file v-model="image" accept="image/*"></b-form-file>
           <b-card>
             <b-card-text>
-              <b-table
-                striped
-                small
-                head-variant="dark"
-                :items="imageFields"
-                :fields="tableColumns"
-              >
-                <template v-slot:cell(fieldType)="row">
-                  <b-col>
-                    <b-form-select
-                      v-model="row.item.fieldType"
-                      :options="fieldTypes"
-                      @input="onFieldTypeChange(row)"
-                    >
-                    </b-form-select>
-                  </b-col>
-                </template>
-                <template v-slot:cell(text)="row">
-                  <b-col>
-                    <b-form-input
-                      type="text"
-                      v-model="row.item.customText"
-                      :disabled="row.item.fieldType != 'CUSTOM_TEXT'"
-                      @input="refreshImageCanvas"
-                    ></b-form-input>
-                  </b-col>
-                </template>
-                <template v-slot:cell(fontSize)="row">
-                  <b-col>
-                    <b-form-input
-                      v-model="row.item.fontSize"
-                      @input="refreshImageCanvas"
-                    ></b-form-input>
-                  </b-col>
-                </template>
-                <template v-slot:cell(xPos)="row">
-                  <b-col>
-                    <b-form-input
-                      v-model="row.item.xPos"
-                      @input="refreshImageCanvas"
-                    ></b-form-input>
-                  </b-col>
-                </template>
-                <template v-slot:cell(yPos)="row">
-                  <b-col>
-                    <b-form-input
-                      v-model="row.item.yPos"
-                      @input="refreshImageCanvas"
-                    ></b-form-input>
-                  </b-col>
-                </template>
-                <template v-slot:cell(options)="row">
-                  <b-button
-                    variant="danger"
-                    @click="rowDeleteClick(row)"
-                    class="mr-2"
-                  >
-                    Delete
-                  </b-button>
-                </template>
-              </b-table>
-              <b-button variant="success" @click="addNewField()">
-                Add new field
-              </b-button>
+              <ImageFields v-model="imageFields"></ImageFields>
             </b-card-text>
           </b-card>
         </b-card-text>
       </b-card>
       Template image preview
-      <canvas class="image_canvas" id="canvas" width="0" height="0"></canvas>
+      <ImagePreview
+        class="image_preview"
+        :imageSrc="imageSrc"
+        :imageFields="imageFields"
+      ></ImagePreview>
     </div>
     <div>
       <b-button variant="danger" to="/templates" class="mt-2 mr-2">
@@ -104,14 +41,8 @@
 
 <script>
 import toastPresets from "@/utils/toastPresets.js";
-
-const fieldTypes = [
-  { value: "CUSTOM_TEXT", text: "Custom text" },
-  { value: "LOCATION_NAME", text: "Location name" },
-  { value: "EVENT_DESCRIPTION", text: "Event description" },
-  { value: "EVENT_START_DATE", text: "Event start date" },
-  { value: "EVENT_END_DATE", text: "Event end date" },
-];
+import ImageFields from "@/components/displayContent/ImageFields.vue";
+import ImagePreview from "@/components/displayContent/ImagePreview.vue";
 
 export default {
   props: {
@@ -121,19 +52,15 @@ export default {
     initialImageFields: Array,
     templateId: String,
   },
+  components: {
+    ImageFields,
+    ImagePreview,
+  },
   data() {
     return {
       name: this.initialName,
       description: this.initialDescription,
       image: null,
-      tableColumns: [
-        { key: "fieldType", sortable: false },
-        { key: "text", sortable: false },
-        { key: "fontSize", sortable: false },
-        { key: "xPos", sortable: false },
-        { key: "yPos", sortable: false },
-        { key: "options", sortable: false },
-      ],
       imageFields: this.initialImageFields || [],
     };
   },
@@ -141,29 +68,15 @@ export default {
     pageTitle() {
       return this.editMode ? "Edit template" : "Add template";
     },
-    apiUrl() {
-      return this.$store.state.URI;
+    imageSrc() {
+      return this.editMode && !this.image
+        ? `${this.$store.state.URI}/template/getImage/${
+            this.templateId
+          }?x=${Date.now()}`
+        : this.image;
     },
   },
-  created() {
-    this.fieldTypes = fieldTypes;
-  },
-  mounted() {
-    this.previewImg = new Image();
-    if (this.editMode) {
-      this.previewImg.src = `${this.apiUrl}/template/getImage/${
-        this.templateId
-      }?x=${Date.now()}`;
-    }
-    this.previewImg.onload = () => {
-      if (this.previewImg.src) {
-        let canvas = document.getElementById("canvas");
-        canvas.width = this.previewImg.width;
-        canvas.height = this.previewImg.height;
-        this.refreshImageCanvas();
-      }
-    };
-  },
+
   methods: {
     submitTemplate() {
       const { name, description, imageFields, image } = this;
@@ -196,54 +109,6 @@ export default {
           );
         });
     },
-    rowDeleteClick(row) {
-      this.imageFields.splice(row.index, 1);
-      this.refreshImageCanvas();
-    },
-    addNewField() {
-      this.imageFields.push({
-        fieldType: "CUSTOM_TEXT",
-        fontSize: 20,
-        xPos: 50,
-        yPos: 50,
-        customText: "",
-      });
-      this.refreshImageCanvas();
-    },
-    refreshImageCanvas() {
-      if (this.previewImg) {
-        let canvas = document.getElementById("canvas");
-        let context = canvas.getContext("2d");
-
-        context.drawImage(this.previewImg, 0, 0);
-        context.lineWidth = 1;
-
-        this.imageFields.forEach((f) => {
-          context.font = `${f.fontSize}px sans-serif`;
-          context.fillText(f.customText, f.xPos, f.yPos);
-        });
-      }
-    },
-    onPictureUpload() {
-      var reader = new FileReader();
-
-      reader.onloadend = () => {
-        this.previewImg.src = reader.result;
-      };
-
-      if (this.image) {
-        reader.readAsDataURL(this.image);
-      } else {
-        this.previewImg.src = "";
-      }
-    },
-    onFieldTypeChange(row) {
-      if (row.item.fieldType === "CUSTOM_TEXT") {
-        row.item.customText = "";
-      } else {
-        row.item.customText = `<${row.item.fieldType}>`;
-      }
-    },
   },
 };
 </script>
@@ -257,10 +122,8 @@ export default {
   float: left;
   margin-bottom: 5px;
 }
-.image_canvas {
-  position: relative;
+.image_preview {
   width: 40%;
-  filter: grayscale(100%);
 }
 
 /* Responsive layout - makes a one column-layout instead of two-column layout */
@@ -268,7 +131,7 @@ export default {
   .form_card {
     width: 100%;
   }
-  .image_canvas {
+  .image_preview {
     width: 100%;
   }
 }
