@@ -70,11 +70,15 @@ const fieldTypes = [
   { value: "EVENT_DESCRIPTION", text: "Event description" },
   { value: "EVENT_START_DATE", text: "Event start date" },
   { value: "EVENT_END_DATE", text: "Event end date" },
+  { value: "UPCOMING_EVENT_DESCRIPTION", text: "Upcoming event description" },
+  { value: "UPCOMING_EVENT_START_DATE", text: "Upcoming event start date" },
+  { value: "UPCOMING_EVENT_END_DATE", text: "Upcoming event end date" },
 ];
 
 export default {
-  props: {
-    value: Array, //For v-model
+  props: ["imageFields"], //For v-model
+  model: {
+    prop: "imageFields",
   },
   data() {
     return {
@@ -86,7 +90,6 @@ export default {
         { key: "yPos", sortable: false },
         { key: "options", sortable: false },
       ],
-      imageFields: this.value,
     };
   },
   created() {
@@ -106,6 +109,9 @@ export default {
       this.$emit("input", this.imageFields);
     },
     addNewField() {
+      if (!this.imageFields) {
+        this.imageFields = [];
+      }
       this.imageFields.push({
         fieldType: "CUSTOM_TEXT",
         fontSize: 20,
@@ -118,6 +124,6 @@ export default {
     handleInput() {
       this.$emit("input", this.imageFields);
     },
-  }
+  },
 };
 </script>

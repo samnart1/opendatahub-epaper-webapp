@@ -31,112 +31,138 @@
       </template>
 
       <template v-slot:row-details="row">
+        <b-tabs content-class="mt-3">
+          <b-tab lazy title="Information">
+            <b-container>
+              <b-row>
+                <b-col>
+                  <b-row>
+                    <b-col> IP {{ getConnectionIp(row.item.uuid) }} </b-col>
+                    <b-col> Battery: {{ row.item.batteryPercentage }}% </b-col>
+                    <b-col v-if="row.item.errorMessage" class="errorMessage">
+                      Error: {{ row.item.errorMessage }}
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col v-if="row.item.state">
+                      <span v-if="!row.item.state.isSleeping">Is Sleeping</span>
+                      <span v-if="row.item.state.isSleeping">Is Awake</span>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col v-if="row.item.state">
+                      Resolution {{ row.item.resolution.width }} x
+                      {{ row.item.resolution.height }}
+                    </b-col>
+                  </b-row>
+                  <b-row v-if="row.item.state">
+                    <b-col>
+                      Last State at
+                      {{
+                        row.item.state.lastState
+                          | moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                      }}
+                    </b-col>
+                  </b-row>
 
-          <b-tabs content-class="mt-3">
-            <b-tab title="Information" active>
-              <b-container>
-                <b-row>
-                  <b-col>
-                    <b-row>
-                      <b-col> IP {{ getConnectionIp(row.item.uuid) }} </b-col>
-                      <b-col> Battery: {{ row.item.batteryPercentage }}% </b-col>
-                      <b-col v-if="row.item.errorMessage" class="errorMessage"> Error: {{ row.item.errorMessage }} </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col v-if="row.item.state">
-                        <span v-if="!row.item.state.isSleeping">Is Sleeping</span>
-                        <span v-if="row.item.state.isSleeping">Is Awake</span>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col v-if="row.item.state">
-                        Resolution {{ row.item.resolution.width }} x {{ row.item.resolution.height }}
-                      </b-col>
-                    </b-row>
-                    <b-row v-if="row.item.state">
-                      <b-col>
-                        Last State at
-                        {{
-                          row.item.state.lastState
-                            | moment("dddd, MMMM Do YYYY, h:mm:ss a")
-                        }}
-                      </b-col>
-                    </b-row>
-
-                    <b-row class="buttons">
-                      <b-col>
-                        <b-row>
-                          <b-col>
-                            <!--b-form-checkbox
+                  <b-row class="buttons">
+                    <b-col>
+                      <b-row>
+                        <b-col>
+                          <!--b-form-checkbox
                               :disabled="row.item.isLoading"
                               v-model="row.item.inverted"
                               switch
                               v-on:change="invert(row.item)"
                               >Invert</b-form-checkbox
                             -->
-                          </b-col>
-                          <b-col>
-                            <b-button
-                              :disabled="row.item.isLoading"
-                              squared
-                              variant="primary"
-                              @click="sendToDisplay(row.item)"
-                            >
-                              <b-spinner v-if="row.item.isLoading" small></b-spinner>
-                              <span> Send</span></b-button
-                            >
-                          </b-col>
-                          <b-col>
-                            <b-button
-                              squared
-                              variant="primary"
-                              :disabled="row.item.isLoading"
-                              @click="clearDisplay(row.item)"
-                              >Clear</b-button
-                            >
-                          </b-col>
-                          <b-col>
-                            <b-button
-                              squared
-                              variant="primary"
-                              :disabled="row.item.isLoading"
-                              @click="getCurrentState(row.item)"
-                              >State</b-button
-                            >
-                          </b-col>
-                          <b-col>
-                            <b-button
-                              squared
-                              variant="danger"
-                              :disabled="row.item.isLoading"
-                              @click="deleteDisplay(row.item)"
-                              >Delete</b-button
-                            >
-                          </b-col>
-                        </b-row>
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                        </b-col>
+                        <b-col>
+                          <b-button
+                            :disabled="row.item.isLoading"
+                            squared
+                            variant="primary"
+                            @click="sendToDisplay(row.item)"
+                          >
+                            <b-spinner
+                              v-if="row.item.isLoading"
+                              small
+                            ></b-spinner>
+                            <span> Send</span></b-button
+                          >
+                        </b-col>
+                        <b-col>
+                          <b-button
+                            squared
+                            variant="primary"
+                            :disabled="row.item.isLoading"
+                            @click="clearDisplay(row.item)"
+                            >Clear</b-button
+                          >
+                        </b-col>
+                        <b-col>
+                          <b-button
+                            squared
+                            variant="primary"
+                            :disabled="row.item.isLoading"
+                            @click="getCurrentState(row.item)"
+                            >State</b-button
+                          >
+                        </b-col>
+                        <b-col>
+                          <b-button
+                            squared
+                            variant="danger"
+                            :disabled="row.item.isLoading"
+                            @click="deleteDisplay(row.item)"
+                            >Delete</b-button
+                          >
+                        </b-col>
+                      </b-row>
+                    </b-col>
+                  </b-row>
+                </b-col>
 
-                  <b-col>
-                    <b-img
-                      style="border: 2px solid black; border-radius: 5px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
-                      :class="{ invertedImage: row.item.inverted }"
-                      :width="row.item.resolution.width / 2"
-                      :height="row.item.resolution.height / 2"
-                      :src="'data:image/jpeg;base64,' + row.item.template.image"
-                    />
-                  </b-col>
-                </b-row>
-              </b-container>
-            </b-tab>
-            <b-tab title="Content">
-            </b-tab>
-            <b-tab title="Scheduler">
-              <DisplaySchedule lazy :scheduled-content="row.item.scheduledContent" :display-uuid="row.item.uuid" />
-            </b-tab>
-          </b-tabs>
-
+                <b-col>
+                  <b-img
+                    style="
+                      border: 2px solid black;
+                      border-radius: 5px;
+                      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+                        0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                    "
+                    :class="{ invertedImage: row.item.inverted }"
+                    :width="row.item.resolution.width / 2"
+                    :height="row.item.resolution.height / 2"
+                    :src="`${apiUrl}/display-content/get-image/${
+                      row.item.uuid
+                    }?withTextFields=true&x=${Date.now()}`"
+                    fluid
+                    alt="Cannot load preview"
+                  />
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-tab>
+          <b-tab title="Content">
+            <DisplayContent
+              lazy
+              :display-uuid="row.item.uuid"
+              :initial-image-fields="
+                row.item.displayContent && row.item.displayContent.imageFields
+              "
+              :ignore-schedule="row.item.ignoreScheduledContent"
+              @onIgnoreScheduleChange="setIgnoreSchedule"
+            ></DisplayContent>
+          </b-tab>
+          <b-tab title="Scheduler">
+            <DisplaySchedule
+              lazy
+              :scheduled-content="row.item.scheduledContent"
+              :display-uuid="row.item.uuid"
+            />
+          </b-tab>
+        </b-tabs>
       </template>
     </b-table>
   </div>
@@ -145,10 +171,12 @@
 <script>
 import axios from "axios";
 import DisplaySchedule from "./DisplaySchedule.vue";
+import DisplayContent from "./DisplayContent.vue";
 
 export default {
   components: {
-    DisplaySchedule
+    DisplaySchedule,
+    DisplayContent,
   },
   data() {
     return {
@@ -157,12 +185,12 @@ export default {
         { key: "name", sortable: true },
         { key: "location", sortable: true },
         { key: "template", sortable: true },
-        { key: "show_details", sortable: false }
-      ]
+        { key: "show_details", sortable: false },
+      ],
     };
   },
   created() {
-      this.LOW_BATTERY_THRESHOLD = 5;
+    this.LOW_BATTERY_THRESHOLD = 5;
   },
   computed: {
     displays() {
@@ -178,15 +206,17 @@ export default {
       return this.$store.state.templates;
     },
     formatDisplayRows() {
-      if (!this.displays) return []
-      return this.displays.map(item => {
-        if (item.errorMessage)
-          item._rowVariant = 'danger';
+      if (!this.displays) return [];
+      return this.displays.map((item) => {
+        if (item.errorMessage) item._rowVariant = "danger";
         else if (item.batteryPercentage <= this.LOW_BATTERY_THRESHOLD)
-          item._rowVariant = 'warning';
+          item._rowVariant = "warning";
         return item;
-      })
-    }
+      });
+    },
+    apiUrl() {
+      return this.$store.state.URI;
+    },
   },
   methods: {
     invert(display) {
@@ -214,13 +244,13 @@ export default {
 
       axios
         .post(URL, params)
-        .then(response => {
+        .then((response) => {
           this.$store.dispatch("isLoading", [display, false]);
           display.state = response.data;
           // eslint-disable-next-line
           console.log(response);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.dispatch("isLoading", [display, false]);
           display.state = err.data;
           // eslint-disable-next-line
@@ -233,13 +263,13 @@ export default {
       this.$store.dispatch("isLoading", [display, true]);
       axios
         .post(URL)
-        .then(response => {
+        .then((response) => {
           display.state = response.data;
           this.$store.dispatch("isLoading", [display, false]);
           // eslint-disable-next-line
           console.log(response);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.dispatch("isLoading", [display, false]);
           display.state = err.data;
           // eslint-disable-next-line
@@ -253,11 +283,11 @@ export default {
 
       axios
         .get(URL)
-        .then(response => {
+        .then((response) => {
           display.state = response.data;
           this.$store.dispatch("isLoading", [display, false]);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$store.dispatch("isLoading", [display, false]);
           display.state = err.data;
           // eslint-disable-next-line
@@ -267,7 +297,7 @@ export default {
 
     getConnectionIp(uuid) {
       var connection = this.$store.state.connections.filter(
-        c => c.displayUuid === uuid
+        (c) => c.displayUuid === uuid
       );
       if (connection[0]) return connection[0].networkAddress;
       else return "No IP";
@@ -275,7 +305,7 @@ export default {
 
     getConnectionMAC(uuid) {
       var connection = this.$store.state.connections.filter(
-        c => c.displayUuid === uuid
+        (c) => c.displayUuid === uuid
       );
       if (connection[0]) return connection[0].mac;
       else return "No MAC";
@@ -283,27 +313,33 @@ export default {
 
     isConnected(uuid) {
       var connection = this.$store.state.connections.filter(
-        c => c.displayUuid === uuid
+        (c) => c.displayUuid === uuid
       );
       if (connection[0]) return connection[0].connected;
       else return false;
     },
 
     getLocationName(uuid) {
-      let location = this.$store.state.locations.find(
-        l => l.uuid === uuid
-      );
-      if (location)
-        return location.name;
+      let location = this.$store.state.locations.find((l) => l.uuid === uuid);
+      if (location) return location.name;
       else return "No Location";
     },
     getTemplateName(image) {
       // console.log(row.item)
-      var template = this.$store.state.templates.filter(c => c.image === image);
+      var template = this.$store.state.templates.filter(
+        (c) => c.image === image
+      );
       if (template[0]) return template[0].name;
       else return "No Template";
-    }
-  }
+    },
+    setIgnoreSchedule(displayUuid, ignoreFlag) {
+      let display = this.displays.find((d) => d.uuid === displayUuid);
+      if (display) {
+        display.ignoreScheduledContent = ignoreFlag;
+        this.$store.dispatch("updateDisplay", display);
+      }
+    },
+  },
 };
 </script>
 
@@ -317,7 +353,6 @@ export default {
 }
 
 .errorMessage {
-  color: red
+  color: red;
 }
-
 </style>

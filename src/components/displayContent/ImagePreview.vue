@@ -7,6 +7,12 @@ export default {
   props: ["imageSrc", "imageFields"],
   mounted() {
     this.previewImg = new Image();
+    this.previewImg.onerror = () => {
+      let canvas = document.getElementById("canvas");
+      canvas.width = 0;
+      canvas.height = 0;
+    };
+    this.previewImg.alt = "";
     this.previewImg.src = this.imageSrc;
     this.previewImg.onload = () => {
       if (this.previewImg.src) {
@@ -41,10 +47,12 @@ export default {
         context.drawImage(this.previewImg, 0, 0);
         context.lineWidth = 1;
 
-        this.imageFields.forEach((f) => {
-          context.font = `${f.fontSize}px sans-serif`;
-          context.fillText(f.customText, f.xPos, f.yPos);
-        });
+        if (this.imageFields) {
+          this.imageFields.forEach((f) => {
+            context.font = `${f.fontSize}px sans-serif`;
+            context.fillText(f.customText, f.xPos, f.yPos);
+          });
+        }
       }
     },
     applyDataURLToCanvas(newSrc) {

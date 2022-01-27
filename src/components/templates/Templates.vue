@@ -48,7 +48,7 @@
       </template>
       <template v-slot:row-details="row">
         <b-img
-          :src="`${apiUrl}/template/getImage/${
+          :src="`${apiUrl}/template/get-image/${
             row.item.uuid
           }?withTextFields=true&x=${Date.now()}`"
           fluid

@@ -123,7 +123,7 @@ export default {
   margin-bottom: 5px;
 }
 .image_preview {
-  width: 40%;
+  width: 38%;
 }
 
 /* Responsive layout - makes a one column-layout instead of two-column layout */

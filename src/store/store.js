@@ -166,7 +166,14 @@ export default new Vuex.Store({
         Vue.set(state.displaySchedules[updatedSchedule.displayUuid], index, updatedSchedule);
       }
     },
-
+    UPDATE_DISPLAY_CONTENT(state, updatedContent) {
+      let index = state.displays.indexOf(
+        state.displays.filter(display => display.uuid == updatedContent.displayUuid)[0]
+      );
+      if (index > -1) {
+        Vue.set(state.displays[index], "displayContent", updatedContent.displayContent);
+      }
+    },
     INVERT(state, display) {
       var index = state.displays.indexOf(display);
       Vue.set(state.displays, index, display)
@@ -372,9 +379,9 @@ export default new Vuex.Store({
     },
 
     updateDisplay({ commit }, data) {
-      const URL = this.state.URI + "/display/update/" + data.templateUuid;
+      const URL = this.state.URI + "/display/update/";
       axios
-        .put(URL, data.displayUpdated)
+        .put(URL, data)
         .then(response => {
           commit("UPDATE_DISPLAY", response.data);
         })
@@ -434,6 +441,26 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+        });
+    },
+
+    updateDisplayContent({ commit }, data) {
+      const URL = `${this.state.URI}/display-content/set/${data.displayUuid}${data.templateUuid ? "?templateUuid=" + data.templateUuid : ""}`;
+
+      let formData = new FormData();
+      formData.append("displayContent", JSON.stringify(data.displayContent));
+      formData.append("image", data.image);
+
+      return axios
+        .post(URL, formData)
+        .then(() => {
+          commit("UPDATE_DISPLAY_CONTENT", {displayUuid: data.displayUuid, displayContent: data.displayContent});
+          return Promise.resolve();
+        })
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+          return Promise.reject();
         });
     },
 
