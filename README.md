@@ -3,6 +3,8 @@ Frontend to manage edisplay-backend.
 Has all CRUD operations implemented to manage Displays, Locations, Connections and Templates.
 Fully created with [Vue.js](https://vuejs.org/)
 
+[![CI](https://github.com/noi-techpark/it.bz.opendatahub.epaper.webapp/actions/workflows/ci.yml/badge.svg)](https://github.com/noi-techpark/it.bz.opendatahub.epaper.webapp/actions/workflows/ci.yml)
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
