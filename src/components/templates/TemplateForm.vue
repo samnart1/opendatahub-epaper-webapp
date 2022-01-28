@@ -70,7 +70,7 @@ export default {
     },
     imageSrc() {
       return this.editMode && !this.image
-        ? `${this.$store.state.URI}/template/getImage/${
+        ? `${this.$store.state.URI}/template/get-image/${
             this.templateId
           }?x=${Date.now()}`
         : this.image;
