@@ -1,14 +1,18 @@
 <template>
-  <canvas class="image_canvas" id="canvas" width="0" height="0"></canvas>
+  <canvas class="image_canvas" :id="canvasid" width="0" height="0"></canvas>
 </template>
 
 <script>
 export default {
   props: ["imageSrc", "imageFields"],
+  created() {
+    //To prevent duplicate ids between separate instances
+    this.canvasid = Math.ceil(Math.random() * 1000000);
+  },
   mounted() {
     this.previewImg = new Image();
     this.previewImg.onerror = () => {
-      let canvas = document.getElementById("canvas");
+      const canvas = document.getElementById(this.canvasid);
       canvas.width = 0;
       canvas.height = 0;
     };
@@ -16,7 +20,7 @@ export default {
     this.previewImg.src = this.imageSrc;
     this.previewImg.onload = () => {
       if (this.previewImg.src) {
-        let canvas = document.getElementById("canvas");
+        const canvas = document.getElementById(this.canvasid);
         canvas.width = this.previewImg.width;
         canvas.height = this.previewImg.height;
         this.refreshImageCanvas();
@@ -40,8 +44,8 @@ export default {
   },
   methods: {
     refreshImageCanvas() {
-      if (this.previewImg) {
-        let canvas = document.getElementById("canvas");
+      const canvas = document.getElementById(this.canvasid);
+      if (this.previewImg && canvas.width > 0 && canvas.height > 0) {
         let context = canvas.getContext("2d");
 
         context.drawImage(this.previewImg, 0, 0);

@@ -10,9 +10,9 @@
       <template v-slot:cell(fieldType)="row">
         <b-col>
           <b-form-select
-            v-model="row.item.fieldType"
+            :value="row.item.fieldType"
             :options="fieldTypes"
-            @input="onFieldTypeChange(row)"
+            @input="onFieldTypeChange($event, row)"
           >
           </b-form-select>
         </b-col>
@@ -21,33 +21,33 @@
         <b-col>
           <b-form-input
             type="text"
-            v-model="row.item.customText"
+            :value="row.item.customText"
             :disabled="row.item.fieldType != 'CUSTOM_TEXT'"
-            @input="handleInput"
+            @input="handleInput($event, row.index, 'customText')"
           ></b-form-input>
         </b-col>
       </template>
       <template v-slot:cell(fontSize)="row">
         <b-col>
           <b-form-input
-            v-model="row.item.fontSize"
-            @input="handleInput"
+            :value="row.item.fontSize"
+            @input="handleInput($event, row.index, 'fontSize')"
           ></b-form-input>
         </b-col>
       </template>
       <template v-slot:cell(xPos)="row">
         <b-col>
           <b-form-input
-            v-model="row.item.xPos"
-            @input="handleInput"
+            :value="row.item.xPos"
+            @input="handleInput($event, row.index, 'xPos')"
           ></b-form-input>
         </b-col>
       </template>
       <template v-slot:cell(yPos)="row">
         <b-col>
           <b-form-input
-            v-model="row.item.yPos"
-            @input="handleInput"
+            :value="row.item.yPos"
+            @input="handleInput($event, row.index, 'yPos')"
           ></b-form-input>
         </b-col>
       </template>
@@ -96,33 +96,41 @@ export default {
     this.fieldTypes = fieldTypes;
   },
   methods: {
-    onFieldTypeChange(row) {
-      if (row.item.fieldType === "CUSTOM_TEXT") {
-        row.item.customText = "";
+    copyImageFields() {
+      return this.imageFields.map((f) => {
+        return { ...f };
+      });
+    },
+    onFieldTypeChange(value, row) {
+      const fields = this.copyImageFields();
+      if (value === "CUSTOM_TEXT") {
+        fields[row.index].customText = "";
       } else {
-        row.item.customText = `<${row.item.fieldType}>`;
+        fields[row.index].customText = `<${row.item.fieldType}>`;
       }
-      this.$emit("input", this.imageFields);
+      fields[row.index].fieldType = value;
+      this.$emit("input", fields);
     },
     rowDeleteClick(row) {
-      this.imageFields.splice(row.index, 1);
-      this.$emit("input", this.imageFields);
+      const fields = this.copyImageFields();
+      fields.splice(row.index, 1);
+      this.$emit("input", fields);
     },
     addNewField() {
-      if (!this.imageFields) {
-        this.imageFields = [];
-      }
-      this.imageFields.push({
+      const fields = this.copyImageFields();
+      fields.push({
         fieldType: "CUSTOM_TEXT",
         fontSize: 20,
         xPos: 50,
         yPos: 50,
         customText: "",
       });
-      this.$emit("input", this.imageFields);
+      this.$emit("input", fields);
     },
-    handleInput() {
-      this.$emit("input", this.imageFields);
+    handleInput(value, index, column) {
+      const fields = this.copyImageFields();
+      fields[index][column] = value;
+      this.$emit("input", fields);
     },
   },
 };

@@ -89,9 +89,7 @@ export default {
           initialDescription: template.description,
           initialImageFields:
             template.displayContent &&
-            template.displayContent.imageFields.map((f) => {
-              return { ...f };
-            }),
+            template.displayContent.imageFields,
           templateId: template.uuid,
         };
         this.$router.push({ name: "Template Form", params: formProps });
