@@ -18,12 +18,6 @@
         </b-button>
       </template>
 
-      <template v-slot:cell(template)="row">
-        <b-col>
-          {{ row.item.template.name }}
-        </b-col>
-      </template>
-
       <template v-slot:cell(location)="row">
         <b-col>
           {{ getLocationName(row.item.locationUuid) }}
@@ -134,7 +128,7 @@
                     :class="{ invertedImage: row.item.inverted }"
                     :width="row.item.resolution.width / 2"
                     :height="row.item.resolution.height / 2"
-                    :src="`${apiUrl}/display-content/get-image/${
+                    :src="`${apiUrl}/display/get-image/${
                       row.item.uuid
                     }?withTextFields=true&x=${Date.now()}`"
                     fluid
@@ -184,7 +178,6 @@ export default {
       fields: [
         { key: "name", sortable: true },
         { key: "location", sortable: true },
-        { key: "template", sortable: true },
         { key: "show_details", sortable: false },
       ],
     };

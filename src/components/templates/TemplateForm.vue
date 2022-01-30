@@ -79,28 +79,35 @@ export default {
 
   methods: {
     submitTemplate() {
-      const { name, description, imageFields, image } = this;
-      const data = {
+      const { name, description, imageFields, image, templateId } = this;
+      const templateContent = {
         image,
-        template: {
-          name,
-          description,
-          displayContent: {
-            imageFields,
-          },
+        displayContent: {
+          imageFields,
         },
+        templateUuid: templateId,
+      };
+      const template = {
+        name,
+        description,
       };
 
       let storeOperation;
       if (this.editMode) {
         storeOperation = "updateTemplate";
-        data.template.uuid = this.templateId;
+        template.uuid = templateId;
       } else {
         storeOperation = "createTemplate";
       }
 
       this.$store
-        .dispatch(storeOperation, data)
+        .dispatch(storeOperation, template)
+        .then((template) => {
+          if (template) {
+            templateContent.templateUuid = template.uuid;
+          }
+          return this.$store.dispatch("updateTemplateContent", templateContent);
+        })
         .then(() => this.$router.replace("templates"))
         .catch(() => {
           this.$bvToast.toast(

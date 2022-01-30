@@ -83,7 +83,7 @@ export default {
           this.selectedTemplateId
         }?x=${Date.now()}`;
       } else {
-        return `${this.$store.state.URI}/display-content/get-image/${
+        return `${this.$store.state.URI}/display/get-image/${
           this.displayUuid
         }?x=${Date.now()}`;
       }
@@ -127,8 +127,6 @@ export default {
         });
     },
     onIgnoreScheduleChange(checked) {
-      // eslint-disable-next-line no-console
-      console.log(checked);
       this.$emit("onIgnoreScheduleChange", this.displayUuid, checked);
     },
   },
