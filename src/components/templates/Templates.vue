@@ -48,7 +48,7 @@
       </template>
       <template v-slot:row-details="row">
         <b-img
-          :src="`${apiUrl}/template/getImage/${
+          :src="`${apiUrl}/template/get-image/${
             row.item.uuid
           }?withTextFields=true&x=${Date.now()}`"
           fluid
@@ -89,9 +89,7 @@ export default {
           initialDescription: template.description,
           initialImageFields:
             template.displayContent &&
-            template.displayContent.imageFields.map((f) => {
-              return { ...f };
-            }),
+            template.displayContent.imageFields,
           templateId: template.uuid,
         };
         this.$router.push({ name: "Template Form", params: formProps });

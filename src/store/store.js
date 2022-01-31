@@ -70,8 +70,7 @@ export default new Vuex.Store({
       if (!state.displaySchedules[schedule.displayUuid]) {
         Vue.set(state.displaySchedules, schedule.displayUuid, []);
       }
-      // eslint-disable-next-line no-console
-      console.log(schedule);
+
       state.displaySchedules[schedule.displayUuid].push(schedule);
     },
 
@@ -150,7 +149,7 @@ export default new Vuex.Store({
     },
     UPDATE_DISPLAY_SCHEDULE(state, updatedSchedule) {
       //In case of first edit there is no uuid on schedule, so we have to find edited schedule by event ID instead
-      const idField = updatedSchedule.uuid ? "uuid" : "eventId";
+      const idField = updatedSchedule.eventId ? "eventId" : "uuid";
 
       let index = state.displaySchedules[updatedSchedule.displayUuid].indexOf(
         state.displaySchedules[updatedSchedule.displayUuid].filter(schedule => schedule[idField] == updatedSchedule[idField])[0]
@@ -166,7 +165,33 @@ export default new Vuex.Store({
         Vue.set(state.displaySchedules[updatedSchedule.displayUuid], index, updatedSchedule);
       }
     },
-
+    UPDATE_DISPLAY_CONTENT(state, updatedContent) {
+      let index = state.displays.indexOf(
+        state.displays.filter(display => display.uuid == updatedContent.displayUuid)[0]
+      );
+      if (index > -1) {
+        Vue.set(state.displays[index], "displayContent", updatedContent.displayContent);
+      }
+    },
+    UPDATE_TEMPLATE_CONTENT(state, updatedContent) {
+      let index = state.templates.indexOf(
+        state.templates.filter(templates => templates.uuid == updatedContent.templateUuid)[0]
+      );
+      if (index > -1) {
+        Vue.set(state.templates[index], "displayContent", updatedContent.displayContent);
+      }
+    },
+    UPDATE_SCHEDULED_CONTENT(state, updatedContent) {
+      const flatScheduledContents = Object.keys(state.displaySchedules).reduce(function (r, k) {
+        return r.concat(state.displaySchedules[k]);
+      }, []);
+      let index = flatScheduledContents.indexOf(
+        flatScheduledContents.filter(sc => sc.uuid == updatedContent.scheduledContentUuid)[0]
+      );
+      if (index > -1) {
+        Vue.set(flatScheduledContents[index], "displayContent", updatedContent.displayContent);
+      }
+    },
     INVERT(state, display) {
       var index = state.displays.indexOf(display);
       Vue.set(state.displays, index, display)
@@ -280,17 +305,13 @@ export default new Vuex.Store({
         });
     },
 
-    createTemplate({ commit }, data) {
+    createTemplate({ commit }, template) {
       const URL = this.state.URI + "/template/create";
-      let formData = new FormData();
-      formData.append("template", JSON.stringify(data.template));
-      formData.append("image", data.image);
-
       return axios
-        .post(URL, formData)
+        .post(URL, template)
         .then(response => {
           commit("ADD_TEMPLATE", response.data);
-          return Promise.resolve();
+          return Promise.resolve(response.data);
         })
         .catch(err => {
           // eslint-disable-next-line
@@ -301,14 +322,16 @@ export default new Vuex.Store({
 
     createDisplaySchedule({ commit }, schedule) {
       const URL = this.state.URI + "/ScheduledContent/create";
-      axios
+      return axios
         .post(URL, schedule)
         .then(response => {
           commit("ADD_DISPLAY_SCHEDULE", response.data);
+          return Promise.resolve(response.data);
         })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject();
         });
     },
 
@@ -372,9 +395,9 @@ export default new Vuex.Store({
     },
 
     updateDisplay({ commit }, data) {
-      const URL = this.state.URI + "/display/update/" + data.templateUuid;
+      const URL = this.state.URI + "/display/update/";
       axios
-        .put(URL, data.displayUpdated)
+        .put(URL, data)
         .then(response => {
           commit("UPDATE_DISPLAY", response.data);
         })
@@ -395,17 +418,12 @@ export default new Vuex.Store({
         });
     },
 
-    updateTemplate({ commit }, data) {
-      const URL = this.state.URI + "/template/create";
-
-      let formData = new FormData();
-      formData.append("template", JSON.stringify(data.template));
-      formData.append("image", data.image);
-
+    updateTemplate({ commit }, template) {
+      const URL = this.state.URI + "/template/update";
       return axios
-        .post(URL, formData)
+        .put(URL, template)
         .then(() => {
-          commit("UPDATE_TEMPLATE", data.template);
+          commit("UPDATE_TEMPLATE", template);
           return Promise.resolve();
         })
         .catch(err => {
@@ -428,12 +446,94 @@ export default new Vuex.Store({
 
     updateDisplaySchedule({ commit }, schedule) {
       const URL = this.state.URI + "/ScheduledContent/update";
-      axios
+      return axios
         .put(URL, schedule)
-        .then(() => commit("UPDATE_DISPLAY_SCHEDULE", schedule))
+        .then((response) => {
+          //If server indicates that a new resource was created, we have to use server response for UUID
+          if (response.status === 201) {
+            commit("UPDATE_DISPLAY_SCHEDULE", response.data);
+            return Promise.resolve(response.data);
+          } else {
+            commit("UPDATE_DISPLAY_SCHEDULE", schedule);
+            return Promise.resolve();
+          }
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject();
+        });
+    },
+
+    updateDisplayContent({ commit }, data) {
+      let URL;
+      let postData;
+      if (data.image || !data.templateUuid) {
+        URL = `${this.state.URI}/display/set-new-image/${data.displayUuid}`;
+        postData = new FormData();
+        postData.append("displayContentDtoJson", JSON.stringify(data.displayContent));
+        postData.append("image", data.image);
+      } else {
+        URL = `${this.state.URI}/display/set-template-image/${data.displayUuid}?templateUuid=${data.templateUuid}`;
+        postData = data.displayContent;
+      }
+
+      return axios
+        .post(URL, postData)
+        .then(() => {
+          commit("UPDATE_DISPLAY_CONTENT", {displayUuid: data.displayUuid, displayContent: data.displayContent});
+          return Promise.resolve();
+        })
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+          return Promise.reject();
+        });
+    },
+
+    updateScheduledContent({ commit }, data) {
+      let URL;
+      let postData;
+      if (data.image || !data.templateUuid) {
+        URL = `${this.state.URI}/ScheduledContent/set-new-image/${data.scheduledContentUuid}`;
+        postData = new FormData();
+        postData.append("displayContentDtoJson", JSON.stringify(data.displayContent));
+        postData.append("image", data.image);
+      } else {
+        URL = `${this.state.URI}/ScheduledContent/set-template-image/${data.scheduledContentUuid}?templateUuid=${data.templateUuid}`;
+        postData = data.displayContent;
+      }
+
+      return axios
+        .post(URL, postData)
+        .then(() => {
+          commit("UPDATE_SCHEDULED_CONTENT", {scheduledContentUuid: data.scheduledContentUuid, displayContent: data.displayContent});
+          return Promise.resolve();
+        })
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+          return Promise.reject();
+        });
+    },
+
+    updateTemplateContent({ commit }, data) {
+      const URL = `${this.state.URI}/template/set-image/${data.templateUuid}`;
+
+      let formData = new FormData();
+      formData.append("displayContentDtoJson", JSON.stringify(data.displayContent));
+      formData.append("image", data.image);
+
+      return axios
+        .post(URL, formData)
+        .then(() => {
+          commit("UPDATE_TEMPLATE_CONTENT", {templateUuid: data.templateUuid, displayContent: data.displayContent});
+          return Promise.resolve();
+        })
+        .catch(err => {
+          // eslint-disable-next-line
+          console.log(err);
+          return Promise.reject();
         });
     },
 
