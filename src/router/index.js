@@ -1,10 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Displays from "@/components/displays/Displays.vue";
+import DisplayForm from "@/components/displays/DisplayForm.vue";
 import Login from "@/components/Login.vue";
-import Create from "@/components/create/Create.vue";
-import Update from "@/components/update/Update.vue";
-import SimpleCreate from "@/components/create/SimpleCreate";
 import Locations from "@/components/locations/Locations.vue";
 import LocationForm from "@/components/locations/LocationForm.vue";
 import Templates from "@/components/templates/Templates.vue";
@@ -26,24 +24,15 @@ export default new Router({
       component: Login
     },
     {
-      path: "/simple-create",
-      name: "Simple Create",
-      component: SimpleCreate
-    },
-    {
-      path: "/create",
-      name: "Create",
-      component: Create
-    },
-    {
-      path: "/update",
-      name: "Edit",
-      component: Update
-    },
-    {
       path: "/displays",
       name: "Displays",
       component: Displays
+    },
+    {
+      path: "/display-form",
+      name: "Display Form",
+      component: DisplayForm,
+      props: true
     },
     {
       path: "/locations",

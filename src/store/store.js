@@ -10,6 +10,7 @@ export default new Vuex.Store({
     locations: [],
     connections: [],
     templates: [],
+    resolutions: [],
     displaySchedules: {},
     URI: process.env.VUE_APP_API_URL
   },
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     connections: state => state.connections,
     templates: state => state.templates,
     rooms: state => state.rooms,
+    resolutions: state => state.resolutions,
     displaySchedules: state => state.displaySchedules
   },
 
@@ -47,6 +49,9 @@ export default new Vuex.Store({
           code: room.code,
         };
       });
+    },
+    SET_RESOLUTIONS(state, resolutions) {
+      state.resolutions = resolutions;
     },
     SET_DISPLAY_SCHEDULE(state, {schedule, displayUuid}) {
       Vue.set(state.displaySchedules, displayUuid, schedule);
@@ -217,11 +222,11 @@ export default new Vuex.Store({
         .get(this.state.URI + `/location/all`)
         .then(response => commit("SET_LOCATIONS", response.data));
       axios
-        .get(this.state.URI + `/connection/all`)
-        .then(response => commit("SET_CONNECTIONS", response.data));
-      axios
         .get(this.state.URI + `/template/all`)
         .then(response => commit("SET_TEMPLATES", response.data));
+      axios
+        .get(this.state.URI + `/resolution/all`)
+        .then(response => commit("SET_RESOLUTIONS", response.data));
       axios
         .get(this.state.URI + `/NOI-Place/all`)
         .then(response => commit("SET_ROOMS", response.data));
@@ -233,49 +238,18 @@ export default new Vuex.Store({
         .then(response => commit("SET_DISPLAY_SCHEDULE", { schedule: response.data, displayUuid }));
     },
 
-    createDisplay({ commit }, data) {
-      let formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("templateUuid", data.templateUuid);
-      formData.append("width", data.width);
-      formData.append("height", data.height);
-      formData.append("locationUuid", data.locationUuid);
-
+    createDisplay({ commit }, display) {
       const URL = this.state.URI + "/display/create";
-      axios
-        .post(URL, formData, {
-          headers: { "Content-Type": "multipart/form-data" }
-        })
+      return axios
+        .post(URL, display)
         .then(response => {
           commit("ADD_DISPLAY", response.data);
+          return Promise.resolve(response.data);
         })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-        });
-    },
-
-    simpleCreateDisplay({ commit }, data) {
-      let formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("templateUuid", data.templateUuid);
-      formData.append("width", data.width);
-      formData.append("height", data.height);
-      formData.append("locationUuid", data.locationUuid)
-      formData.append("networkAddress", data.networkAddress)
-
-
-      const URL = this.state.URI + "/display/simple-create";
-      axios
-        .post(URL, formData, {
-          headers: { "Content-Type": "multipart/form-data" }
-        })
-        .then(response => {
-          commit("ADD_DISPLAY", response.data);
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
+          return Promise.reject();
         });
     },
 
@@ -396,14 +370,16 @@ export default new Vuex.Store({
 
     updateDisplay({ commit }, data) {
       const URL = this.state.URI + "/display/update/";
-      axios
+      return axios
         .put(URL, data)
         .then(response => {
           commit("UPDATE_DISPLAY", response.data);
+          return Promise.resolve();
         })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject();
         });
     },
 
