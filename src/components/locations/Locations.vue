@@ -74,11 +74,14 @@ export default {
     locations() {
       return this.$store.state.locations;
     },
+    rooms() {
+      return this.$store.state.rooms;
+    }
   },
   methods: {
     getRoomName(code) {
-      if (code)
-        return this.$store.state.rooms.find(r => r.code === code)?.name;
+      if (code && this.rooms)
+        return this.rooms.find(r => r.code === code)?.name;
     },
     editLocation(location) {
       if (location) {

@@ -11,16 +11,16 @@ import TemplateForm from "@/components/templates/TemplateForm.vue";
 Vue.use(Router);
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: "/",
       redirect: {
-        name: "login"
+        name: "Displays"
       }
     },
     {
       path: "/login",
-      name: "login",
       component: Login
     },
     {

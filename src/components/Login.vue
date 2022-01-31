@@ -29,8 +29,9 @@ export default {
           this.input.username == this.$parent.mockAccount.username &&
           this.input.password == this.$parent.mockAccount.password
         ) {
-          this.$emit("authenticated", true);
-          this.$router.replace({ name: "Displays" });
+          
+          localStorage.setItem('user', this.input.username);
+          this.$emit("authenticated");
         }
       }
     }

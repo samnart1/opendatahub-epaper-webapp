@@ -1,30 +1,32 @@
  
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
+    <div class="topbar">
+      <img class="logo" alt="Vue logo" src="./assets/logo.png" />
+      <div class="routerHeader">
+        <h3 class="mb-20">eInk Display management site</h3>
+        <h4 v-if="currentRouteName">{{ currentRouteName }}</h4>
+      </div>
+      <b-nav class="navbar" v-if="username">
+        <b-nav-item
+          v-for="route in routes"
+          :to="route.link"
+          :key="route.link"
+          exact
+          exact-active-class="active"
+          >{{ route.name }}</b-nav-item
+        >
+        <div class="userBox">
+          Hi, {{ username }}
+          <b-nav-item v-if="username" to="/login" v-on:click="logout()" replace
+            >Logout</b-nav-item
+          >
+        </div>
+      </b-nav>
+    </div>
 
     <div class="content">
       <b-card title="Card Title" no-body>
-        <b-card-header header-tag="nav">
-          <b-nav card-header tabs>
-            <b-nav-item
-              v-if="authenticated"
-              to="/login"
-              v-on:click.native="logout()"
-              replace
-              >Logout</b-nav-item
-            >
-            <b-nav-item   v-if="authenticated" to="/displays" exact exact-active-class="active"
-              >Displays</b-nav-item
-            >
-            <b-nav-item  v-if="authenticated" to="/locations" exact exact-active-class="active"
-              >Locations</b-nav-item
-            >
-            <b-nav-item   v-if="authenticated" to="/templates" exact exact-active-class="active"
-              >Templates</b-nav-item
-            >
-          </b-nav>
-        </b-card-header>
         <b-card-body class="text-center">
           <router-view @authenticated="setAuthenticated" />
         </b-card-body>
@@ -38,26 +40,42 @@ export default {
   name: "app",
   data() {
     return {
-      authenticated: false,
+      username: null,
       mockAccount: {
         username: "user",
-        password: "pass"
-      }
+        password: "pass",
+      },
+      routes: [
+        { name: "Displays", link: "/displays" },
+        { name: "Locations", link: "/locations" },
+        { name: "Templates", link: "/templates" },
+      ],
     };
   },
+  computed: {
+    currentRouteName() {
+      if (this.routes.some((e) => e.name === this.$route.name)) {
+        return this.$route.name;
+      }
+      return "";
+    },
+  },
   mounted() {
-    if (!this.authenticated) {
-      this.$router.replace({ name: "login" });
+    this.username = localStorage.getItem("user");
+    if (!this.username) {
+      this.$router.replace("/login");
     }
   },
   methods: {
-    setAuthenticated(status) {
-      this.authenticated = status;
+    setAuthenticated() {
+      this.username = localStorage.getItem("user");
+      this.$router.replace({ name: "Displays" });
     },
     logout() {
-      this.authenticated = false;
-    }
-  }
+      this.username = null;
+      localStorage.removeItem("user");
+    },
+  },
 };
 </script>
 
@@ -68,13 +86,34 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .content {
-  margin-top: 60px;
-  margin-bottom: 60px;
-  margin-left: 10%;
-  width: 80%;
+  margin-top: 20px;
+}
+
+.topbar {
+  height: 150px;
+}
+
+.navbar {
+  float: right;
+}
+
+.logo {
+  margin-left: 30px;
+  float: left;
+}
+
+.routerHeader {
+  float: left;
+  text-align: left;
+  margin-left: 50px;
+}
+
+.userBox {
+  border-radius: 8px;
+  border: 2px solid #aaaaaa;
 }
 </style>
