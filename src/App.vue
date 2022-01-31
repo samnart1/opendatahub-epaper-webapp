@@ -1,13 +1,13 @@
  
 <template>
   <div id="app">
-    <div class="topbar">
-      <img class="logo" alt="Vue logo" src="./assets/logo.png" />
+    <div v-if="username" class="topbar">
+      <img class="logo" alt="Vue logo" src="./assets/logo_bn.svg" />
       <div class="routerHeader">
-        <h3 class="mb-20">eInk Display management site</h3>
+        <h3>{{siteName}}</h3>
         <h4 v-if="currentRouteName">{{ currentRouteName }}</h4>
       </div>
-      <b-nav class="navbar" v-if="username">
+      <b-nav class="navbar">
         <b-nav-item
           v-for="route in routes"
           :to="route.link"
@@ -23,6 +23,12 @@
           >
         </div>
       </b-nav>
+    </div>
+    <div v-else>
+      <img class="bigLogo"  alt="Vue logo" src="./assets/logo.png" />
+      
+      <h3 >{{siteName}}</h3>
+   
     </div>
 
     <div class="content">
@@ -50,6 +56,7 @@ export default {
         { name: "Locations", link: "/locations" },
         { name: "Templates", link: "/templates" },
       ],
+      siteName: "eInk Display management site"
     };
   },
   computed: {
@@ -94,7 +101,7 @@ export default {
 }
 
 .topbar {
-  height: 150px;
+  height: 75px;
 }
 
 .navbar {
@@ -102,14 +109,19 @@ export default {
 }
 
 .logo {
-  margin-left: 30px;
+  margin-left: 20px;
+  margin-top: 8px;
   float: left;
+}
+
+.bigLogo {
+  margin-bottom: 25px;
 }
 
 .routerHeader {
   float: left;
   text-align: left;
-  margin-left: 50px;
+  margin-left: 30px;
 }
 
 .userBox {
