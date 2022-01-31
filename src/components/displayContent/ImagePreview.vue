@@ -13,17 +13,21 @@ export default {
     this.previewImg = new Image();
     this.previewImg.onerror = () => {
       const canvas = document.getElementById(this.canvasid);
-      canvas.width = 0;
-      canvas.height = 0;
+      if (canvas) {
+        canvas.width = 0;
+        canvas.height = 0;
+      }
     };
     this.previewImg.alt = "";
     this.previewImg.src = this.imageSrc;
     this.previewImg.onload = () => {
       if (this.previewImg.src) {
         const canvas = document.getElementById(this.canvasid);
-        canvas.width = this.previewImg.width;
-        canvas.height = this.previewImg.height;
-        this.refreshImageCanvas();
+        if (canvas) {
+          canvas.width = this.previewImg.width;
+          canvas.height = this.previewImg.height;
+          this.refreshImageCanvas();
+        }
       }
     };
   },

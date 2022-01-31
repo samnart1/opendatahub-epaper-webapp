@@ -1,5 +1,8 @@
 <template>
   <div>
+    <b-button variant="success" to="/display-form" class="mb-2">
+      Add display
+    </b-button>
     <b-table
       striped
       hover
@@ -31,10 +34,16 @@
               <b-row>
                 <b-col>
                   <b-row>
-                    <b-col> IP {{ getConnectionIp(row.item.uuid) }} </b-col>
+                    <b-col> Display ID: {{ row.item.uuid }} </b-col>
+                  </b-row>
+                  <b-row>
+                    
                     <b-col> Battery: {{ row.item.batteryPercentage }}% </b-col>
                     <b-col v-if="row.item.errorMessage" class="errorMessage">
                       Error: {{ row.item.errorMessage }}
+                    </b-col>
+                    <b-col v-if="row.item.warningMessage">
+                      Warning: {{ row.item.warningMessage }}
                     </b-col>
                   </b-row>
                   <b-row>
@@ -44,16 +53,16 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col v-if="row.item.state">
-                      Resolution {{ row.item.resolution.width }} x
-                      {{ row.item.resolution.height }}
+                    <b-col v-if="row.item.resolution">
+                      Resolution: {{ row.item.resolution.width }} x
+                      {{ row.item.resolution.height }} ({{ row.item.resolution.bitDepth }} bit)
                     </b-col>
                   </b-row>
-                  <b-row v-if="row.item.state">
+                  <b-row v-if="row.item.lastState">
                     <b-col>
                       Last State at
                       {{
-                        row.item.state.lastState
+                        row.item.lastState
                           | moment("dddd, MMMM Do YYYY, h:mm:ss a")
                       }}
                     </b-col>
@@ -62,45 +71,13 @@
                   <b-row class="buttons">
                     <b-col>
                       <b-row>
-                        <b-col>
-                          <!--b-form-checkbox
-                              :disabled="row.item.isLoading"
-                              v-model="row.item.inverted"
-                              switch
-                              v-on:change="invert(row.item)"
-                              >Invert</b-form-checkbox
-                            -->
-                        </b-col>
-                        <b-col>
-                          <b-button
-                            :disabled="row.item.isLoading"
-                            squared
-                            variant="primary"
-                            @click="sendToDisplay(row.item)"
-                          >
-                            <b-spinner
-                              v-if="row.item.isLoading"
-                              small
-                            ></b-spinner>
-                            <span> Send</span></b-button
-                          >
-                        </b-col>
-                        <b-col>
+                         <b-col>
                           <b-button
                             squared
-                            variant="primary"
+                            variant="warning"
                             :disabled="row.item.isLoading"
-                            @click="clearDisplay(row.item)"
-                            >Clear</b-button
-                          >
-                        </b-col>
-                        <b-col>
-                          <b-button
-                            squared
-                            variant="primary"
-                            :disabled="row.item.isLoading"
-                            @click="getCurrentState(row.item)"
-                            >State</b-button
+                            @click="editDisplay(row.item)"
+                            >Edit</b-button
                           >
                         </b-col>
                         <b-col>
@@ -126,8 +103,6 @@
                         0 6px 20px 0 rgba(0, 0, 0, 0.19);
                     "
                     :class="{ invertedImage: row.item.inverted }"
-                    :width="row.item.resolution.width / 2"
-                    :height="row.item.resolution.height / 2"
                     :src="`${apiUrl}/display/get-image/${
                       row.item.uuid
                     }?withTextFields=true&x=${Date.now()}`"
@@ -332,6 +307,15 @@ export default {
         this.$store.dispatch("updateDisplay", display);
       }
     },
+    editDisplay(display) {
+      if (display) {
+        let formProps = {
+          editMode: true,
+          display
+        };
+        this.$router.push({ name: "Display Form", params: formProps });
+      }      
+    }
   },
 };
 </script>

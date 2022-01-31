@@ -106,7 +106,7 @@ export default {
       if (value === "CUSTOM_TEXT") {
         fields[row.index].customText = "";
       } else {
-        fields[row.index].customText = `<${row.item.fieldType}>`;
+        fields[row.index].customText = `<${value}>`;
       }
       fields[row.index].fieldType = value;
       this.$emit("input", fields);
