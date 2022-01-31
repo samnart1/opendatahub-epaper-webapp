@@ -120,7 +120,7 @@
               :initial-image-fields="
                 row.item.displayContent && row.item.displayContent.imageFields
               "
-              :ignore-schedule="row.item.ignoreScheduledContent"
+              :ignore-schedule="row.item.ignoringScheduledContent"
               @onIgnoreScheduleChange="setIgnoreSchedule"
             ></DisplayContent>
           </b-tab>
@@ -303,7 +303,7 @@ export default {
     setIgnoreSchedule(displayUuid, ignoreFlag) {
       let display = this.displays.find((d) => d.uuid === displayUuid);
       if (display) {
-        display.ignoreScheduledContent = ignoreFlag;
+        display.ignoringScheduledContent = ignoreFlag;
         this.$store.dispatch("updateDisplay", display);
       }
     },
