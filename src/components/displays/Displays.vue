@@ -14,7 +14,7 @@
         <b-button
           squared
           variant="info"
-          @click="row.toggleDetails"
+          @click="onDetailClick(row.item)"
           class="mr-2"
         >
           {{ row.detailsShowing ? "Hide" : "Show" }} Details
@@ -26,124 +26,45 @@
           {{ getLocationName(row.item.locationUuid) }}
         </b-col>
       </template>
-
-      <template v-slot:row-details="row">
-        <b-tabs content-class="mt-3">
-          <b-tab lazy title="Information">
-            <b-container>
-              <b-row>
-                <b-col>
-                  <b-row>
-                    <b-col> Display ID: {{ row.item.uuid }} </b-col>
-                  </b-row>
-                  <b-row>
-                    
-                    <b-col> Battery: {{ row.item.batteryPercentage }}% </b-col>
-                    <b-col v-if="row.item.errorMessage" class="errorMessage">
-                      Error: {{ row.item.errorMessage }}
-                    </b-col>
-                    <b-col v-if="row.item.warningMessage">
-                      Warning: {{ row.item.warningMessage }}
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col v-if="row.item.state">
-                      <span v-if="!row.item.state.isSleeping">Is Sleeping</span>
-                      <span v-if="row.item.state.isSleeping">Is Awake</span>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col v-if="row.item.resolution">
-                      Resolution: {{ row.item.resolution.width }} x
-                      {{ row.item.resolution.height }} ({{ row.item.resolution.bitDepth }} bit)
-                    </b-col>
-                  </b-row>
-                  <b-row v-if="row.item.lastState">
-                    <b-col>
-                      Last State at
-                      {{
-                        row.item.lastState
-                          | moment("dddd, MMMM Do YYYY, h:mm:ss a")
-                      }}
-                    </b-col>
-                  </b-row>
-
-                  <b-row class="buttons">
-                    <b-col>
-                      <b-row>
-                         <b-col>
-                          <b-button
-                            squared
-                            variant="warning"
-                            :disabled="row.item.isLoading"
-                            @click="editDisplay(row.item)"
-                            >Edit</b-button
-                          >
-                        </b-col>
-                        <b-col>
-                          <b-button
-                            squared
-                            variant="danger"
-                            :disabled="row.item.isLoading"
-                            @click="deleteDisplay(row.item)"
-                            >Delete</b-button
-                          >
-                        </b-col>
-                      </b-row>
-                    </b-col>
-                  </b-row>
-                </b-col>
-
-                <b-col>
-                  <b-img
-                    style="
-                      border: 2px solid black;
-                      border-radius: 5px;
-                      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
-                        0 6px 20px 0 rgba(0, 0, 0, 0.19);
-                    "
-                    :class="{ invertedImage: row.item.inverted }"
-                    :src="`${apiUrl}/display/get-image/${
-                      row.item.uuid
-                    }?withTextFields=true&x=${Date.now()}`"
-                    fluid
-                    alt="Cannot load preview"
-                  />
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-tab>
-          <b-tab title="Content">
-            <DisplayContent
-              lazy
-              :display-uuid="row.item.uuid"
-              :initial-image-fields="
-                row.item.displayContent && row.item.displayContent.imageFields
-              "
-              :ignore-schedule="row.item.ignoreScheduledContent"
-              @onIgnoreScheduleChange="setIgnoreSchedule"
-            ></DisplayContent>
-          </b-tab>
-          <b-tab title="Scheduler">
-            <DisplaySchedule
-              lazy
-              :scheduled-content="row.item.scheduledContent"
-              :display-uuid="row.item.uuid"
-            />
-          </b-tab>
-        </b-tabs>
-      </template>
     </b-table>
+    <b-modal id="details-modal" hide-footer size="xl" title="Display details">
+      <b-tabs content-class="mt-3" class="detailModal" v-if="selectedDisplay">
+        <b-tab lazy title="Information">
+          <DisplayInformation lazy :display="selectedDisplay" />
+        </b-tab>
+        <b-tab title="Content">
+          <DisplayContent
+            lazy
+            :display-uuid="selectedDisplay.uuid"
+            :initial-image-fields="
+              selectedDisplay.displayContent &&
+              selectedDisplay.displayContent.imageFields
+            "
+            :ignore-schedule="selectedDisplay.ignoreScheduledContent"
+            @onIgnoreScheduleChange="setIgnoreSchedule"
+          ></DisplayContent>
+        </b-tab>
+        <b-tab title="Scheduler">
+          <DisplaySchedule
+            lazy
+            :scheduled-content="selectedDisplay.scheduledContent"
+            :display-uuid="selectedDisplay.uuid"
+          />
+        </b-tab>
+      </b-tabs>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import DisplayInformation from "./DisplayInformation.vue";
 import DisplaySchedule from "./DisplaySchedule.vue";
 import DisplayContent from "./DisplayContent.vue";
 
 export default {
   components: {
+    DisplayInformation,
     DisplaySchedule,
     DisplayContent,
   },
@@ -182,16 +103,10 @@ export default {
         return item;
       });
     },
-    apiUrl() {
-      return this.$store.state.URI;
-    },
   },
   methods: {
     invert(display) {
       this.$store.dispatch("invert", display);
-    },
-    deleteDisplay(display) {
-      this.$store.dispatch("deleteDisplay", display);
     },
     deleteLocation(location) {
       this.$store.dispatch("deleteLocation", location);
@@ -307,15 +222,10 @@ export default {
         this.$store.dispatch("updateDisplay", display);
       }
     },
-    editDisplay(display) {
-      if (display) {
-        let formProps = {
-          editMode: true,
-          display
-        };
-        this.$router.push({ name: "Display Form", params: formProps });
-      }      
-    }
+    onDetailClick(item) {
+      this.selectedDisplay = item;
+      this.$bvModal.show("details-modal");
+    },
   },
 };
 </script>
@@ -325,11 +235,7 @@ export default {
   filter: invert(100%);
 }
 
-.buttons {
-  margin-top: 10%;
-}
-
-.errorMessage {
-  color: red;
+.detailModal {
+  text-align: center;
 }
 </style>
