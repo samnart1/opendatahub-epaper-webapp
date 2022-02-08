@@ -11,6 +11,11 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
 
         VUE_APP_API_URL = "https://api.epaper.opendatahub.testingmachine.eu"
+
+        VUE_APP_KEYCLOAK_URL = "https://auth.opendatahub.testingmachine.eu/auth"
+        VUE_APP_KEYCLOAK_REALM = "noi"
+        VUE_APP_KEYCLOAK_CLIENT_ID = "it.bz.opendatahub.epaper.web"
+        VUE_APP_KEYCLOAK_RESOURCE_CLIENT_ID = "it.bz.opendatahub.epaper.api"
     }
 
     stages {
