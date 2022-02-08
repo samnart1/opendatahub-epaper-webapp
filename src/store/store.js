@@ -12,7 +12,9 @@ export default new Vuex.Store({
     templates: [],
     resolutions: [],
     displaySchedules: {},
-    URI: process.env.VUE_APP_API_URL
+    URI: process.env.VUE_APP_API_URL,
+    authenticated: false,
+    axiosKeycloakConfig: null,
   },
 
   getters: {
@@ -22,7 +24,8 @@ export default new Vuex.Store({
     templates: state => state.templates,
     rooms: state => state.rooms,
     resolutions: state => state.resolutions,
-    displaySchedules: state => state.displaySchedules
+    displaySchedules: state => state.displaySchedules,
+    authenticated: state => state.authenticated
   },
 
   mutations: {
@@ -210,38 +213,48 @@ export default new Vuex.Store({
         state.displays[index].isLoading = value
       }
       Vue.set(state.displays, index, display)
+    },
+    SET_AUTHENTICATED(state, authenticated) {
+      state.authenticated = authenticated;
+    },
+    SET_AXIOS_KEYCLOAK_CONFIG(state, token) {
+      state.axiosKeycloakConfig = {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      }
     }
   },
 
   actions: {
     loadData({ commit }) {
       axios
-        .get(this.state.URI + `/display/all`)
+        .get(this.state.URI + `/display/all`, this.state.axiosKeycloakConfig)
         .then(response => commit("SET_DISPLAYS", response.data));
       axios
-        .get(this.state.URI + `/location/all`)
+        .get(this.state.URI + `/location/all`, this.state.axiosKeycloakConfig)
         .then(response => commit("SET_LOCATIONS", response.data));
       axios
-        .get(this.state.URI + `/template/all`)
+        .get(this.state.URI + `/template/all`, this.state.axiosKeycloakConfig)
         .then(response => commit("SET_TEMPLATES", response.data));
       axios
-        .get(this.state.URI + `/resolution/all`)
+        .get(this.state.URI + `/resolution/all`, this.state.axiosKeycloakConfig)
         .then(response => commit("SET_RESOLUTIONS", response.data));
       axios
-        .get(this.state.URI + `/NOI-Place/all`)
+        .get(this.state.URI + `/NOI-Place/all`, this.state.axiosKeycloakConfig)
         .then(response => commit("SET_ROOMS", response.data));
     },
 
     loadDisplaySchedule({ commit }, displayUuid) {
       axios
-        .get(this.state.URI + `/ScheduledContent/all?displayUuid=${displayUuid}`)
+        .get(this.state.URI + `/ScheduledContent/all?displayUuid=${displayUuid}`, this.state.axiosKeycloakConfig)
         .then(response => commit("SET_DISPLAY_SCHEDULE", { schedule: response.data, displayUuid }));
     },
 
     createDisplay({ commit }, display) {
       const URL = this.state.URI + "/display/create";
       return axios
-        .post(URL, display)
+        .post(URL, display, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("ADD_DISPLAY", response.data);
           return Promise.resolve(response.data);
@@ -256,7 +269,7 @@ export default new Vuex.Store({
     createLocation({ commit }, location) {
       const URL = this.state.URI + "/location/create";
       axios
-        .post(URL, location)
+        .post(URL, location, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("ADD_LOCATION", response.data);
         })
@@ -269,7 +282,7 @@ export default new Vuex.Store({
     createConnection({ commit }, connection) {
       const URL = this.state.URI + "/connection/create";
       axios
-        .post(URL, connection)
+        .post(URL, connection, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("ADD_CONNECTION", response.data);
         })
@@ -282,7 +295,7 @@ export default new Vuex.Store({
     createTemplate({ commit }, template) {
       const URL = this.state.URI + "/template/create";
       return axios
-        .post(URL, template)
+        .post(URL, template, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("ADD_TEMPLATE", response.data);
           return Promise.resolve(response.data);
@@ -297,7 +310,7 @@ export default new Vuex.Store({
     createDisplaySchedule({ commit }, schedule) {
       const URL = this.state.URI + "/ScheduledContent/create";
       return axios
-        .post(URL, schedule)
+        .post(URL, schedule, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("ADD_DISPLAY_SCHEDULE", response.data);
           return Promise.resolve(response.data);
@@ -312,7 +325,7 @@ export default new Vuex.Store({
     deleteDisplay({ commit }, display) {
       const URL = this.state.URI + "/display/delete/" + display.uuid;
       axios
-        .delete(URL)
+        .delete(URL, this.state.axiosKeycloakConfig)
         .then(commit("DELETE_DISPLAY", display))
         .catch(err => {
           // eslint-disable-next-line
@@ -323,7 +336,7 @@ export default new Vuex.Store({
     deleteLocation({ commit }, location) {
       const URL = this.state.URI + "/location/delete/" + location.uuid;
       axios
-        .delete(URL)
+        .delete(URL, this.state.axiosKeycloakConfig)
         .then(commit("DELETE_LOCATION", location))
         .catch(err => {
           // eslint-disable-next-line
@@ -334,7 +347,7 @@ export default new Vuex.Store({
     deleteConnection({ commit }, connection) {
       const URL = this.state.URI + "/connection/delete/" + connection.uuid;
       axios
-        .delete(URL)
+        .delete(URL, this.state.axiosKeycloakConfig)
         .then(commit("DELETE_CONNECTION", connection))
         .catch(err => {
           // eslint-disable-next-line
@@ -345,7 +358,7 @@ export default new Vuex.Store({
     deleteTemplate({ commit }, template) {
       const URL = this.state.URI + "/template/delete/" + template.uuid;
       return axios
-        .delete(URL)
+        .delete(URL, this.state.axiosKeycloakConfig)
         .then(() => {
           commit("DELETE_TEMPLATE", template);
           return Promise.resolve();
@@ -360,7 +373,7 @@ export default new Vuex.Store({
     deleteDisplaySchedule({ commit }, schedule) {
       const URL = this.state.URI + "/ScheduledContent/delete/" + schedule.uuid;
       axios
-        .delete(URL)
+        .delete(URL, this.state.axiosKeycloakConfig)
         .then(() => commit("DELETE_DISPLAY_SCHEDULE", schedule))
         .catch(err => {
           // eslint-disable-next-line
@@ -371,7 +384,7 @@ export default new Vuex.Store({
     updateDisplay({ commit }, data) {
       const URL = this.state.URI + "/display/update/";
       return axios
-        .put(URL, data)
+        .put(URL, data, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("UPDATE_DISPLAY", response.data);
           return Promise.resolve();
@@ -386,7 +399,7 @@ export default new Vuex.Store({
     updateLocation({ commit }, location) {
       const URL = this.state.URI + "/location/update";
       axios
-        .put(URL, location)
+        .put(URL, location, this.state.axiosKeycloakConfig)
         .then(commit("UPDATE_LOCATION", location))
         .catch(err => {
           // eslint-disable-next-line
@@ -397,7 +410,7 @@ export default new Vuex.Store({
     updateTemplate({ commit }, template) {
       const URL = this.state.URI + "/template/update";
       return axios
-        .put(URL, template)
+        .put(URL, template, this.state.axiosKeycloakConfig)
         .then(() => {
           commit("UPDATE_TEMPLATE", template);
           return Promise.resolve();
@@ -412,7 +425,7 @@ export default new Vuex.Store({
     updateConnection({ commit }, connection) {
       const URL = this.state.URI + "/connection/update";
       axios
-        .put(URL, connection)
+        .put(URL, connection, this.state.axiosKeycloakConfig)
         .then(commit("UPDATE_CONNECTION", connection))
         .catch(err => {
           // eslint-disable-next-line
@@ -423,7 +436,7 @@ export default new Vuex.Store({
     updateDisplaySchedule({ commit }, schedule) {
       const URL = this.state.URI + "/ScheduledContent/update";
       return axios
-        .put(URL, schedule)
+        .put(URL, schedule, this.state.axiosKeycloakConfig)
         .then((response) => {
           //If server indicates that a new resource was created, we have to use server response for UUID
           if (response.status === 201) {
@@ -455,7 +468,7 @@ export default new Vuex.Store({
       }
 
       return axios
-        .post(URL, postData)
+        .post(URL, postData, this.state.axiosKeycloakConfig)
         .then(() => {
           commit("UPDATE_DISPLAY_CONTENT", {displayUuid: data.displayUuid, displayContent: data.displayContent});
           return Promise.resolve();
@@ -481,7 +494,7 @@ export default new Vuex.Store({
       }
 
       return axios
-        .post(URL, postData)
+        .post(URL, postData, this.state.axiosKeycloakConfig)
         .then(() => {
           commit("UPDATE_SCHEDULED_CONTENT", {scheduledContentUuid: data.scheduledContentUuid, displayContent: data.displayContent});
           return Promise.resolve();
@@ -501,7 +514,7 @@ export default new Vuex.Store({
       formData.append("image", data.image);
 
       return axios
-        .post(URL, formData)
+        .post(URL, formData, this.state.axiosKeycloakConfig)
         .then(() => {
           commit("UPDATE_TEMPLATE_CONTENT", {templateUuid: data.templateUuid, displayContent: data.displayContent});
           return Promise.resolve();
@@ -511,6 +524,14 @@ export default new Vuex.Store({
           console.log(err);
           return Promise.reject();
         });
+    },
+
+    setAuthenticated({commit}, authenticated) {
+      commit("SET_AUTHENTICATED", authenticated)
+    },
+
+    setToken({ commit }, token) {
+      commit("SET_AXIOS_KEYCLOAK_CONFIG", token)
     },
 
     invert({ commit }, display) {

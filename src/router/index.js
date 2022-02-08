@@ -7,10 +7,11 @@ import Locations from "@/components/locations/Locations.vue";
 import LocationForm from "@/components/locations/LocationForm.vue";
 import Templates from "@/components/templates/Templates.vue";
 import TemplateForm from "@/components/templates/TemplateForm.vue";
+import Unauthorized from "@/components/Unauthorized.vue";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -21,40 +22,89 @@ export default new Router({
     },
     {
       path: "/login",
-      component: Login
+      component: Login,
+      name: 'Login'
+    },
+    {
+      path: "/unauthorized",
+      component: Unauthorized,
+      name: 'Unauthorized'
     },
     {
       path: "/displays",
       name: "Displays",
-      component: Displays
+      component: Displays,
+      meta: {
+        isAuthenticated: true
+      }
     },
     {
       path: "/display-form",
       name: "Display Form",
       component: DisplayForm,
-      props: true
+      props: true,
+      meta: {
+        isAuthenticated: true
+      }
     },
     {
       path: "/locations",
       name: "Locations",
-      component: Locations
+      component: Locations,
+      meta: {
+        isAuthenticated: true
+      }
     },
     {
       path: "/location-form",
       name: "Location Form",
       component: LocationForm,
-      props: true
+      props: true,
+      meta: {
+        isAuthenticated: true
+      }
     },
     {
       path: "/templates",
       name: "Templates",
-      component: Templates
+      component: Templates,
+      meta: {
+        isAuthenticated: true
+      }
     },
     {
       path: "/template-form",
       name: "Template Form",
       component: TemplateForm,
-      props: true
+      props: true,
+      meta: {
+        isAuthenticated: true
+      }
     },
-  ]
+  ],
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.isAuthenticated) {
+    if (!Vue.$keycloak.authenticated) {
+      // The page is protected and the user is not authenticated. Redirect to login.
+      next({ name: 'Login' })
+    } else if (Vue.$keycloak.hasResourceRole('admin', process.env.VUE_APP_KEYCLOAK_RESOURCE_CLIENT_ID)) {
+      // The user was authenticated, and has the app role
+      next()
+    } else {
+      // The user was authenticated, but did not have the correct role
+      // Redirect to an error page
+      next({ name: 'Unauthorized' })
+    }
+  } else if (Vue.$keycloak.authenticated && to.name === "Login") {
+    // This page is Login and user is already authenticated
+    // Redirect to home
+    next("/")
+  } else {
+    // This page did not require authentication
+    next()
+  }
+})
+
+export default router;

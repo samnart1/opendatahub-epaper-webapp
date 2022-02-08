@@ -1,10 +1,10 @@
  
 <template>
   <div id="app">
-    <div v-if="username" class="topbar">
+    <div v-if="authenticated" class="topbar">
       <img class="logo" alt="Vue logo" src="./assets/logo_bn.svg" />
       <div class="routerHeader">
-        <h3>{{siteName}}</h3>
+        <h3>{{ siteName }}</h3>
         <h4 v-if="currentRouteName">{{ currentRouteName }}</h4>
       </div>
       <b-nav class="navbar">
@@ -18,23 +18,19 @@
         >
         <div class="userBox">
           Hi, {{ username }}
-          <b-nav-item v-if="username" to="/login" v-on:click="logout()" replace
-            >Logout</b-nav-item
-          >
+          <b-nav-item v-if="username" v-on:click="logout()">Logout</b-nav-item>
         </div>
       </b-nav>
     </div>
     <div v-else>
-      <img class="bigLogo"  alt="Vue logo" src="./assets/logo.png" />
-      
-      <h3 >{{siteName}}</h3>
-   
+      <img class="bigLogo" alt="Vue logo" src="./assets/logo.png" />
+      <h3>{{ siteName }}</h3>
     </div>
 
     <div class="content">
       <b-card title="Card Title" no-body>
         <b-card-body class="text-center">
-          <router-view @authenticated="setAuthenticated" />
+          <router-view />
         </b-card-body>
       </b-card>
     </div>
@@ -46,17 +42,13 @@ export default {
   name: "app",
   data() {
     return {
-      username: null,
-      mockAccount: {
-        username: "user",
-        password: "pass",
-      },
+      username: null, 
       routes: [
         { name: "Displays", link: "/displays" },
         { name: "Locations", link: "/locations" },
         { name: "Templates", link: "/templates" },
       ],
-      siteName: "eInk Display management site"
+      siteName: "eInk Display management site",
     };
   },
   computed: {
@@ -66,21 +58,21 @@ export default {
       }
       return "";
     },
-  },
-  mounted() {
-    this.username = localStorage.getItem("user");
-    if (!this.username) {
-      this.$router.replace("/login");
+    authenticated() {
+      return this.$store.state.authenticated;
     }
   },
+  mounted() {
+    if (this.authenticated) {
+      this.$keycloak.loadUserInfo().then((info) => {
+        this.username = info.name;
+      });
+    } 
+  },
   methods: {
-    setAuthenticated() {
-      this.username = localStorage.getItem("user");
-      this.$router.replace({ name: "Displays" });
-    },
     logout() {
-      this.username = null;
-      localStorage.removeItem("user");
+      const redirectPath = window.location.origin + "/";
+      this.$keycloak.logout({ redirectUri: redirectPath });
     },
   },
 };

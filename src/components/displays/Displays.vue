@@ -57,7 +57,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import DisplayInformation from "./DisplayInformation.vue";
 import DisplaySchedule from "./DisplaySchedule.vue";
 import DisplayContent from "./DisplayContent.vue";
@@ -116,66 +115,6 @@ export default {
     },
     deleteTemplate(template) {
       this.$store.dispatch("deleteTemplate", template);
-    },
-    sendToDisplay(display) {
-      const URL = this.$store.state.URI + "/display/send";
-      let params = new FormData();
-      params.append("uuid", display.uuid);
-      params.append("inverted", display.inverted);
-
-      this.$store.dispatch("isLoading", [display, true]);
-
-      axios
-        .post(URL, params)
-        .then((response) => {
-          this.$store.dispatch("isLoading", [display, false]);
-          display.state = response.data;
-          // eslint-disable-next-line
-          console.log(response);
-        })
-        .catch((err) => {
-          this.$store.dispatch("isLoading", [display, false]);
-          display.state = err.data;
-          // eslint-disable-next-line
-          console.log(err);
-        });
-    },
-    clearDisplay(display) {
-      const URL = this.$store.state.URI + "/display/clear/" + display.uuid;
-
-      this.$store.dispatch("isLoading", [display, true]);
-      axios
-        .post(URL)
-        .then((response) => {
-          display.state = response.data;
-          this.$store.dispatch("isLoading", [display, false]);
-          // eslint-disable-next-line
-          console.log(response);
-        })
-        .catch((err) => {
-          this.$store.dispatch("isLoading", [display, false]);
-          display.state = err.data;
-          // eslint-disable-next-line
-          console.log(err);
-        });
-    },
-    getCurrentState(display) {
-      const URL = this.$store.state.URI + "/display/state/" + display.uuid;
-
-      this.$store.dispatch("isLoading", [display, true]);
-
-      axios
-        .get(URL)
-        .then((response) => {
-          display.state = response.data;
-          this.$store.dispatch("isLoading", [display, false]);
-        })
-        .catch((err) => {
-          this.$store.dispatch("isLoading", [display, false]);
-          display.state = err.data;
-          // eslint-disable-next-line
-          console.log(err);
-        });
     },
 
     getConnectionIp(uuid) {
