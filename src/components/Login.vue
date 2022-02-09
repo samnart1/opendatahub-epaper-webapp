@@ -9,10 +9,16 @@
 <script>
 export default {
   name: "Login",
+  props: {
+    redirectPath: {
+      type: String,
+      default: "/",
+    },
+  },
   methods: {
     login() {
-      const redirectPath = window.location.origin + "/";
-      this.$keycloak.login({ redirectUri: redirectPath });
+      const redirectUri = window.location.origin + this.redirectPath;
+      this.$keycloak.login({ redirectUri });
     },
   },
 };

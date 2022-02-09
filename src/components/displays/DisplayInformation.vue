@@ -3,10 +3,10 @@
     <b-row>
       <b-col>
         <b-row>
-          <b-col> Display name: {{ display.name }} </b-col>
+          <b-col> Display ID: {{ display.uuid }} </b-col>
         </b-row>
         <b-row>
-          <b-col> Display ID: {{ display.uuid }} </b-col>
+          <b-col> Display name: {{ display.name }} </b-col>
         </b-row>
         <b-row>
           <b-col :class="batteryLevelClass">

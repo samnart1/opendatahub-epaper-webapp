@@ -23,7 +23,10 @@ const router = new Router({
     {
       path: "/login",
       component: Login,
-      name: 'Login'
+      name: 'Login',
+      props: route => ({
+        redirectPath: route.query.redirectPath,
+      })
     },
     {
       path: "/unauthorized",
@@ -36,7 +39,13 @@ const router = new Router({
       component: Displays,
       meta: {
         isAuthenticated: true
-      }
+      },
+      props: route => ({
+        displayId: route.query.displayId,
+        screenWidth: parseInt(route.query.screenWidth),
+        screenHeight: parseInt(route.query.screenHeight),
+        screenBitDepth: parseInt(route.query.screenBitDepth),
+      })
     },
     {
       path: "/display-form",
@@ -88,7 +97,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.isAuthenticated) {
     if (!Vue.$keycloak.authenticated) {
       // The page is protected and the user is not authenticated. Redirect to login.
-      next({ name: 'Login' })
+      next(`/login${window.location.pathname !== '/' ? `?redirectPath=${encodeURIComponent(window.location.pathname + window.location.search)}` : ''}`);
     } else if (Vue.$keycloak.hasResourceRole('admin', process.env.VUE_APP_KEYCLOAK_RESOURCE_CLIENT_ID)) {
       // The user was authenticated, and has the app role
       next()

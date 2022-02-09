@@ -27,13 +27,14 @@
       <h3>{{ siteName }}</h3>
     </div>
 
-    <div class="content">
+    <div class="content" v-if="dataLoaded || !authenticated">
       <b-card title="Card Title" no-body>
         <b-card-body class="text-center">
           <router-view />
         </b-card-body>
       </b-card>
     </div>
+    <b-spinner v-else></b-spinner>
   </div>
 </template>
 
@@ -60,6 +61,9 @@ export default {
     },
     authenticated() {
       return this.$store.state.authenticated;
+    },
+    dataLoaded() {
+      return this.$store.state.dataLoaded;
     }
   },
   mounted() {

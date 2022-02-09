@@ -14,7 +14,7 @@
         <b-button
           squared
           variant="info"
-          @click="onDetailClick(row.item)"
+          @click="openDisplayDetails(row.item)"
           class="mr-2"
         >
           {{ row.detailsShowing ? "Hide" : "Show" }} Details
@@ -67,6 +67,14 @@ export default {
     DisplaySchedule,
     DisplayContent,
   },
+  props: {
+    // --- These props are used in QR code link ---
+    displayId: String,
+    screenWidth: Number,
+    screenHeight: Number,
+    screenBitDepth: Number,
+    // ---
+  },
   data() {
     return {
       selectedDisplay: null,
@@ -76,9 +84,6 @@ export default {
         { key: "show_details", sortable: false },
       ],
     };
-  },
-  created() {
-    this.LOW_BATTERY_THRESHOLD = 5;
   },
   computed: {
     displays() {
@@ -102,6 +107,34 @@ export default {
         return item;
       });
     },
+  },
+  created() {
+    this.LOW_BATTERY_THRESHOLD = 5;
+  },
+  mounted() {
+    //Check if we received display id via props
+    if (this.displayId) {
+      let display = this.displays.find((d) => d.uuid === this.displayId);
+      if (display) {
+        // Activate detail modal
+        this.openDisplayDetails(display);
+      } else {
+        // No display found, go to display insert form
+        let display = {
+          uuid: this.displayId,
+        };
+        display.resolution = this.$store.state.resolutions.find(
+          (r) =>
+            r.width === this.screenWidth &&
+            r.height === this.screenHeight &&
+            r.bitDepth === this.screenBitDepth
+        );
+        let formProps = {
+          display,
+        };
+        this.$router.replace({ name: "Display Form", params: formProps });
+      }
+    }
   },
   methods: {
     invert(display) {
@@ -147,7 +180,6 @@ export default {
       else return "No Location";
     },
     getTemplateName(image) {
-      // console.log(row.item)
       var template = this.$store.state.templates.filter(
         (c) => c.image === image
       );
@@ -161,8 +193,8 @@ export default {
         this.$store.dispatch("updateDisplay", display);
       }
     },
-    onDetailClick(item) {
-      this.selectedDisplay = item;
+    openDisplayDetails(display) {
+      this.selectedDisplay = display;
       this.$bvModal.show("details-modal");
     },
   },

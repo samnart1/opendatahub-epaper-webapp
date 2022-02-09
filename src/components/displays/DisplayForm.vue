@@ -2,6 +2,7 @@
   <b-card :title="pageTitle">
     <b-card-text>
       <b-form @submit.prevent="submitDisplay">
+        <b-form-input v-model="uuid" label="ID" placeholder="Enter a display ID" :disabled="editMode" />
         <b-form-input v-model="name" label="Name" placeholder="Enter a name" />
         <b-form-select
           v-model="locationUuid"
@@ -45,6 +46,7 @@ export default {
   data() {
     return {
       name: this.display.name,
+      uuid: this.display.uuid,
       resolutionUuid: this.display.resolution
         ? this.display.resolution.uuid
         : null,
@@ -69,11 +71,12 @@ export default {
   },
   methods: {
     submitDisplay() {
-      const { name, locationUuid, resolutionUuid, display } = this;
+      const { name, uuid, locationUuid, resolutionUuid, display } = this;
 
       const data = {
         ...display,
         name,
+        uuid,
         locationUuid,
         resolution: this.$store.state.resolutions.find(
           (r) => r.uuid === resolutionUuid

@@ -15,6 +15,7 @@ export default new Vuex.Store({
     URI: process.env.VUE_APP_API_URL,
     authenticated: false,
     axiosKeycloakConfig: null,
+    dataLoaded: false,
   },
 
   getters: {
@@ -56,7 +57,7 @@ export default new Vuex.Store({
     SET_RESOLUTIONS(state, resolutions) {
       state.resolutions = resolutions;
     },
-    SET_DISPLAY_SCHEDULE(state, {schedule, displayUuid}) {
+    SET_DISPLAY_SCHEDULE(state, { schedule, displayUuid }) {
       Vue.set(state.displaySchedules, displayUuid, schedule);
     },
 
@@ -223,26 +224,33 @@ export default new Vuex.Store({
           "Authorization": `Bearer ${token}`
         }
       }
-    }
+    },
+    SET_DATA_LOADED(state, dataLoaded) {
+      state.dataLoaded = dataLoaded;
+    },
   },
 
   actions: {
     loadData({ commit }) {
-      axios
-        .get(this.state.URI + `/display/all`, this.state.axiosKeycloakConfig)
-        .then(response => commit("SET_DISPLAYS", response.data));
-      axios
-        .get(this.state.URI + `/location/all`, this.state.axiosKeycloakConfig)
-        .then(response => commit("SET_LOCATIONS", response.data));
-      axios
-        .get(this.state.URI + `/template/all`, this.state.axiosKeycloakConfig)
-        .then(response => commit("SET_TEMPLATES", response.data));
-      axios
-        .get(this.state.URI + `/resolution/all`, this.state.axiosKeycloakConfig)
-        .then(response => commit("SET_RESOLUTIONS", response.data));
-      axios
-        .get(this.state.URI + `/NOI-Place/all`, this.state.axiosKeycloakConfig)
-        .then(response => commit("SET_ROOMS", response.data));
+      Promise.all([
+        axios
+          .get(this.state.URI + `/display/all`, this.state.axiosKeycloakConfig),
+        axios
+          .get(this.state.URI + `/location/all`, this.state.axiosKeycloakConfig),
+        axios
+          .get(this.state.URI + `/template/all`, this.state.axiosKeycloakConfig),
+        axios
+          .get(this.state.URI + `/resolution/all`, this.state.axiosKeycloakConfig),
+        axios
+          .get(this.state.URI + `/NOI-Place/all`, this.state.axiosKeycloakConfig)
+      ]).then(responses => {
+        commit("SET_DISPLAYS", responses[0].data);
+        commit("SET_LOCATIONS", responses[1].data);
+        commit("SET_TEMPLATES", responses[2].data);
+        commit("SET_RESOLUTIONS", responses[3].data);
+        commit("SET_ROOMS", responses[4].data);
+        commit("SET_DATA_LOADED", true);
+      }).catch(() => commit("SET_DATA_LOADED", true))
     },
 
     loadDisplaySchedule({ commit }, displayUuid) {
@@ -470,7 +478,7 @@ export default new Vuex.Store({
       return axios
         .post(URL, postData, this.state.axiosKeycloakConfig)
         .then(() => {
-          commit("UPDATE_DISPLAY_CONTENT", {displayUuid: data.displayUuid, displayContent: data.displayContent});
+          commit("UPDATE_DISPLAY_CONTENT", { displayUuid: data.displayUuid, displayContent: data.displayContent });
           return Promise.resolve();
         })
         .catch(err => {
@@ -496,7 +504,7 @@ export default new Vuex.Store({
       return axios
         .post(URL, postData, this.state.axiosKeycloakConfig)
         .then(() => {
-          commit("UPDATE_SCHEDULED_CONTENT", {scheduledContentUuid: data.scheduledContentUuid, displayContent: data.displayContent});
+          commit("UPDATE_SCHEDULED_CONTENT", { scheduledContentUuid: data.scheduledContentUuid, displayContent: data.displayContent });
           return Promise.resolve();
         })
         .catch(err => {
@@ -516,7 +524,7 @@ export default new Vuex.Store({
       return axios
         .post(URL, formData, this.state.axiosKeycloakConfig)
         .then(() => {
-          commit("UPDATE_TEMPLATE_CONTENT", {templateUuid: data.templateUuid, displayContent: data.displayContent});
+          commit("UPDATE_TEMPLATE_CONTENT", { templateUuid: data.templateUuid, displayContent: data.displayContent });
           return Promise.resolve();
         })
         .catch(err => {
@@ -526,7 +534,7 @@ export default new Vuex.Store({
         });
     },
 
-    setAuthenticated({commit}, authenticated) {
+    setAuthenticated({ commit }, authenticated) {
       commit("SET_AUTHENTICATED", authenticated)
     },
 
