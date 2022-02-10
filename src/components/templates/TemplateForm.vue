@@ -109,9 +109,9 @@ export default {
           return this.$store.dispatch("updateTemplateContent", templateContent);
         })
         .then(() => this.$router.replace("templates"))
-        .catch(() => {
+        .catch((err) => {
           this.$bvToast.toast(
-            "Failed to save template",
+            "Failed to save template " + err,
             toastPresets.errorMessage
           );
         });

@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import toastPresets from "@/utils/toastPresets.js";
+
 export default {
   props: {
     editMode: Boolean,
@@ -65,7 +67,13 @@ export default {
 
       this.$store
         .dispatch(storeOperation, data)
-        .then(() => this.$router.replace("locations"));
+        .then(() => this.$router.replace("locations"))
+        .catch((err) => {
+          this.$bvToast.toast(
+            "Failed to save location " + err,
+            toastPresets.errorMessage
+          );
+        });
     },
   },
 };

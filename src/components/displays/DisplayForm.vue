@@ -2,7 +2,12 @@
   <b-card :title="pageTitle">
     <b-card-text>
       <b-form @submit.prevent="submitDisplay">
-        <b-form-input v-model="uuid" label="ID" placeholder="Enter a display ID" :disabled="editMode" />
+        <b-form-input
+          v-model="uuid"
+          label="ID"
+          placeholder="Enter a display ID"
+          :disabled="editMode"
+        />
         <b-form-input v-model="name" label="Name" placeholder="Enter a name" />
         <b-form-select
           v-model="locationUuid"
@@ -93,9 +98,9 @@ export default {
       this.$store
         .dispatch(storeOperation, data)
         .then(() => this.$router.replace("displays"))
-        .catch(() => {
+        .catch((err) => {
           this.$bvToast.toast(
-            "Failed to save display",
+            "Failed to save display " + err,
             toastPresets.errorMessage
           );
         });

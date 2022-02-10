@@ -9,6 +9,7 @@
       head-variant="dark"
       :items="locations"
       :fields="fields"
+      primary-key="uuid"
     >
       <template v-slot:cell(name)="row">
         <b-col>
@@ -18,7 +19,7 @@
 
       <template v-slot:cell(room)="row">
         <b-col>
-          {{ getRoomName(row.item.roomCode) }}
+          {{ row.item.room }}
         </b-col>
       </template>
 
@@ -28,14 +29,6 @@
         </b-col>
       </template>
       <template v-slot:cell(options)="row">
-        <b-button
-          squared
-          variant="info"
-          @click="row.toggleDetails"
-          class="mr-2"
-        >
-          {{ row.detailsShowing ? "Hide" : "Show" }} Details
-        </b-button>
         <b-button
           squared
           variant="warning"
@@ -58,7 +51,6 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -67,22 +59,21 @@ export default {
         { key: "room", sortable: true },
         { key: "description", sortable: true },
         { key: "options", sortable: false },
-      ]
+      ],
     };
   },
   computed: {
     locations() {
-      return this.$store.state.locations;
+      let locations = this.$store.state.locations;
+      locations.forEach((l) => {
+        l.room = this.$store.state.rooms.find(
+          (r) => r.code === l.roomCode
+        )?.name;
+      });
+      return locations;
     },
-    rooms() {
-      return this.$store.state.rooms;
-    }
   },
   methods: {
-    getRoomName(code) {
-      if (code && this.rooms)
-        return this.rooms.find(r => r.code === code)?.name;
-    },
     editLocation(location) {
       if (location) {
         let formProps = {
@@ -90,17 +81,20 @@ export default {
           locationId: location.uuid,
           initialName: location.name,
           initialDescription: location.description,
-          initialRoomCode: location.roomCode
+          initialRoomCode: location.roomCode,
         };
-        this.$router.push({ name: 'Location Form', params: formProps });
+        this.$router.push({ name: "Location Form", params: formProps });
       }
     },
     deleteLocation(location) {
-      this.$bvModal.msgBoxConfirm(`Are you sure you want to delete this location (${location.name}) ?`).then((okPressed) => {
-        if (okPressed)
-          this.$store.dispatch('deleteLocation', location);
-      })
-    }
-  }
+      this.$bvModal
+        .msgBoxConfirm(
+          `Are you sure you want to delete this location (${location.name}) ?`
+        )
+        .then((okPressed) => {
+          if (okPressed) this.$store.dispatch("deleteLocation", location);
+        });
+    },
+  },
 };
 </script>

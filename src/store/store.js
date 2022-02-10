@@ -8,7 +8,6 @@ export default new Vuex.Store({
   state: {
     displays: [],
     locations: [],
-    connections: [],
     templates: [],
     resolutions: [],
     displaySchedules: {},
@@ -21,7 +20,6 @@ export default new Vuex.Store({
   getters: {
     displays: state => state.displays,
     locations: state => state.locations,
-    connections: state => state.connections,
     templates: state => state.templates,
     rooms: state => state.rooms,
     resolutions: state => state.resolutions,
@@ -39,9 +37,6 @@ export default new Vuex.Store({
     },
     SET_LOCATIONS(state, locations) {
       state.locations = locations;
-    },
-    SET_CONNECTIONS(state, connections) {
-      state.connections = connections;
     },
     SET_TEMPLATES(state, templates) {
       state.templates = templates;
@@ -69,9 +64,6 @@ export default new Vuex.Store({
     ADD_LOCATION(state, location) {
       state.locations.push(location);
     },
-    ADD_CONNECTION(state, connection) {
-      state.connections.push(connection);
-    },
     ADD_TEMPLATE(state, template) {
       state.templates.push(template);
     },
@@ -94,12 +86,6 @@ export default new Vuex.Store({
       var index = state.locations.indexOf(location);
       if (index > -1) {
         state.locations.splice(index, 1);
-      }
-    },
-    DELETE_CONNECTION(state, connection) {
-      var index = state.connections.indexOf(connection);
-      if (index > -1) {
-        state.connections.splice(index, 1);
       }
     },
     DELETE_TEMPLATE(state, template) {
@@ -146,16 +132,6 @@ export default new Vuex.Store({
       }
     },
 
-    UPDATE_CONNECTION(state, updatedConnection) {
-      var index = state.connections.indexOf(
-        state.connections.filter(
-          connection => connection.uuid == updatedConnection.uuid
-        )[0]
-      );
-      if (index > -1) {
-        state.connections[index] = updatedConnection;
-      }
-    },
     UPDATE_DISPLAY_SCHEDULE(state, updatedSchedule) {
       //In case of first edit there is no uuid on schedule, so we have to find edited schedule by event ID instead
       const idField = updatedSchedule.eventId ? "eventId" : "uuid";
@@ -270,33 +246,22 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
     createLocation({ commit }, location) {
       const URL = this.state.URI + "/location/create";
-      axios
+      return axios
         .post(URL, location, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("ADD_LOCATION", response.data);
+          return Promise.resolve(response.data);
         })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-        });
-    },
-
-    createConnection({ commit }, connection) {
-      const URL = this.state.URI + "/connection/create";
-      axios
-        .post(URL, connection, this.state.axiosKeycloakConfig)
-        .then(response => {
-          commit("ADD_CONNECTION", response.data);
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -311,7 +276,7 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -326,15 +291,18 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
     deleteDisplay({ commit }, display) {
       const URL = this.state.URI + "/display/delete/" + display.uuid;
-      axios
+      return axios
         .delete(URL, this.state.axiosKeycloakConfig)
-        .then(commit("DELETE_DISPLAY", display))
+        .then(() => {
+          commit("DELETE_DISPLAY", display)
+          return Promise.resolve();
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
@@ -343,20 +311,12 @@ export default new Vuex.Store({
 
     deleteLocation({ commit }, location) {
       const URL = this.state.URI + "/location/delete/" + location.uuid;
-      axios
+      return axios
         .delete(URL, this.state.axiosKeycloakConfig)
-        .then(commit("DELETE_LOCATION", location))
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
-        });
-    },
-
-    deleteConnection({ commit }, connection) {
-      const URL = this.state.URI + "/connection/delete/" + connection.uuid;
-      axios
-        .delete(URL, this.state.axiosKeycloakConfig)
-        .then(commit("DELETE_CONNECTION", connection))
+        .then(() => {
+          commit("DELETE_LOCATION", location);
+          return Promise.resolve();
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
@@ -374,18 +334,22 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
     deleteDisplaySchedule({ commit }, schedule) {
       const URL = this.state.URI + "/ScheduledContent/delete/" + schedule.uuid;
-      axios
+      return axios
         .delete(URL, this.state.axiosKeycloakConfig)
-        .then(() => commit("DELETE_DISPLAY_SCHEDULE", schedule))
+        .then(() => {
+          commit("DELETE_DISPLAY_SCHEDULE", schedule)
+          return Promise.resolve();
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -400,18 +364,22 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
     updateLocation({ commit }, location) {
       const URL = this.state.URI + "/location/update";
-      axios
+      return axios
         .put(URL, location, this.state.axiosKeycloakConfig)
-        .then(commit("UPDATE_LOCATION", location))
+        .then(() => {
+          commit("UPDATE_LOCATION", location);
+          return Promise.resolve();
+        })
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -426,18 +394,7 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
-        });
-    },
-
-    updateConnection({ commit }, connection) {
-      const URL = this.state.URI + "/connection/update";
-      axios
-        .put(URL, connection, this.state.axiosKeycloakConfig)
-        .then(commit("UPDATE_CONNECTION", connection))
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -458,7 +415,7 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -484,7 +441,7 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -510,7 +467,7 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 
@@ -530,7 +487,7 @@ export default new Vuex.Store({
         .catch(err => {
           // eslint-disable-next-line
           console.log(err);
-          return Promise.reject();
+          return Promise.reject(err.response.data);
         });
     },
 

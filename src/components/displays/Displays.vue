@@ -92,9 +92,6 @@ export default {
     locations() {
       return this.$store.state.locations;
     },
-    connections() {
-      return this.$store.state.connections;
-    },
     templates() {
       return this.$store.state.templates;
     },
@@ -137,54 +134,10 @@ export default {
     }
   },
   methods: {
-    invert(display) {
-      this.$store.dispatch("invert", display);
-    },
-    deleteLocation(location) {
-      this.$store.dispatch("deleteLocation", location);
-    },
-    deleteConnection(connection) {
-      this.$store.dispatch("deleteConnection", connection);
-    },
-    deleteTemplate(template) {
-      this.$store.dispatch("deleteTemplate", template);
-    },
-
-    getConnectionIp(uuid) {
-      var connection = this.$store.state.connections.filter(
-        (c) => c.displayUuid === uuid
-      );
-      if (connection[0]) return connection[0].networkAddress;
-      else return "No IP";
-    },
-
-    getConnectionMAC(uuid) {
-      var connection = this.$store.state.connections.filter(
-        (c) => c.displayUuid === uuid
-      );
-      if (connection[0]) return connection[0].mac;
-      else return "No MAC";
-    },
-
-    isConnected(uuid) {
-      var connection = this.$store.state.connections.filter(
-        (c) => c.displayUuid === uuid
-      );
-      if (connection[0]) return connection[0].connected;
-      else return false;
-    },
-
     getLocationName(uuid) {
       let location = this.$store.state.locations.find((l) => l.uuid === uuid);
       if (location) return location.name;
       else return "No Location";
-    },
-    getTemplateName(image) {
-      var template = this.$store.state.templates.filter(
-        (c) => c.image === image
-      );
-      if (template[0]) return template[0].name;
-      else return "No Template";
     },
     setIgnoreSchedule(displayUuid, ignoreFlag) {
       let display = this.displays.find((d) => d.uuid === displayUuid);
@@ -202,10 +155,6 @@ export default {
 </script>
 
 <style scoped>
-.invertedImage {
-  filter: invert(100%);
-}
-
 .detailModal {
   text-align: center;
 }
