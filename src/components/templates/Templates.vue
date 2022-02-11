@@ -9,6 +9,8 @@
       head-variant="dark"
       :items="templates"
       :fields="fields"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
     >
       <template v-slot:cell(name)="row">
         <b-col>
@@ -52,7 +54,7 @@
             row.item.uuid
           }?withTextFields=true&x=${Date.now()}`"
           fluid
-          alt="Cannot load preview"
+          alt="No preview, edit the template and include an image"
         ></b-img>
       </template>
     </b-table>
@@ -70,6 +72,8 @@ export default {
         { key: "description", sortable: true },
         { key: "options", sortable: false },
       ],
+      sortBy: "name",
+      sortDesc: false,
     };
   },
   computed: {
@@ -88,8 +92,7 @@ export default {
           initialName: template.name,
           initialDescription: template.description,
           initialImageFields:
-            template.displayContent &&
-            template.displayContent.imageFields,
+            template.displayContent && template.displayContent.imageFields,
           templateId: template.uuid,
         };
         this.$router.push({ name: "Template Form", params: formProps });

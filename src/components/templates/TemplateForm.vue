@@ -7,6 +7,7 @@
             v-model="name"
             label="Name"
             placeholder="Enter a name"
+            required
           />
           <b-form-input
             v-model="description"

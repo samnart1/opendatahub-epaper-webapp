@@ -10,6 +10,8 @@
       :items="locations"
       :fields="fields"
       primary-key="uuid"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
     >
       <template v-slot:cell(name)="row">
         <b-col>
@@ -60,6 +62,8 @@ export default {
         { key: "description", sortable: true },
         { key: "options", sortable: false },
       ],
+      sortBy: "name",
+      sortDesc: false,
     };
   },
   computed: {

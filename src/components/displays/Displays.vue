@@ -9,6 +9,8 @@
       head-variant="dark"
       :items="formatDisplayRows"
       :fields="fields"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
     >
       <template v-slot:cell(show_details)="row">
         <b-button
@@ -21,9 +23,12 @@
         </b-button>
       </template>
 
-      <template v-slot:cell(location)="row">
+      <template v-slot:cell(last_state)="row">
         <b-col>
-          {{ getLocationName(row.item.locationUuid) }}
+          {{
+            row.item.lastState &&
+            `${row.item.lastState.toLocaleDateString()} ${row.item.lastState.toLocaleTimeString()}`
+          }}
         </b-col>
       </template>
     </b-table>
@@ -80,33 +85,53 @@ export default {
       selectedDisplay: null,
       fields: [
         { key: "name", sortable: true },
-        { key: "location", sortable: true },
+        { key: "locationName", label: "Location", sortable: true },
+        { key: "status", sortable: true },
+        { key: "last_state", sortable: false }, // Cannot set "sortKey" for date sorting, need to update bootstrap-vue
         { key: "show_details", sortable: false },
       ],
+      sortBy: "name",
+      sortDesc: false,
     };
   },
   computed: {
     displays() {
       return this.$store.state.displays;
     },
-    locations() {
-      return this.$store.state.locations;
-    },
-    templates() {
-      return this.$store.state.templates;
-    },
     formatDisplayRows() {
       if (!this.displays) return [];
       return this.displays.map((item) => {
-        if (item.errorMessage) item._rowVariant = "danger";
-        else if (item.batteryPercentage <= this.LOW_BATTERY_THRESHOLD)
+        item.location = this.getLocation(item.locationUuid);
+        item.locationName = item.location ? item.location.name : "No location";
+        item.lastState = item.lastState && new Date(item.lastState);
+        if (
+          !item.lastState ||
+          Date.now() - item.lastState > this.NO_STATUS_THRESHOLD
+        ) {
+          item.status = "No status";
+          item._rowVariant = "danger";
+        } else if (item.errorMessage) {
+          item.status = "Error";
+          item._rowVariant = "danger";
+        } else if (item.batteryPercentage <= 0) {
+          item.status = "Dead battery";
+          item._rowVariant = "danger";
+        } else if (item.batteryPercentage <= this.LOW_BATTERY_THRESHOLD) {
+          item.status = "Low battery";
           item._rowVariant = "warning";
+        } else if (item.warningMessage) {
+          item.status = "Warning";
+          item._rowVariant = "warning";
+        } else {
+          item.status = "OK";
+        }
         return item;
       });
     },
   },
   created() {
-    this.LOW_BATTERY_THRESHOLD = 5;
+    this.LOW_BATTERY_THRESHOLD = 10;
+    this.NO_STATUS_THRESHOLD = 10800000; //3 hours
   },
   mounted() {
     //Check if we received display id via props
@@ -134,10 +159,8 @@ export default {
     }
   },
   methods: {
-    getLocationName(uuid) {
-      let location = this.$store.state.locations.find((l) => l.uuid === uuid);
-      if (location) return location.name;
-      else return "No Location";
+    getLocation(uuid) {
+      return this.$store.state.locations.find((l) => l.uuid === uuid);
     },
     setIgnoreSchedule(displayUuid, ignoreFlag) {
       let display = this.displays.find((d) => d.uuid === displayUuid);

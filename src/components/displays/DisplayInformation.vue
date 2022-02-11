@@ -8,6 +8,22 @@
         <b-row>
           <b-col> Display name: {{ display.name }} </b-col>
         </b-row>
+
+        <b-row>
+          <b-col v-if="display.resolution">
+            Resolution: {{ display.resolution.width }} x
+            {{ display.resolution.height }} ({{ display.resolution.bitDepth }}
+            bit)
+          </b-col>
+        </b-row>
+        <b-row v-if="display.location">
+          <b-col> Location name: {{ display.location.name }} </b-col>
+        </b-row>
+        <b-row v-if="display.location && display.location.description">
+          <b-col>
+            Location description: {{ display.location.description }}
+          </b-col>
+        </b-row>
         <b-row>
           <b-col :class="batteryLevelClass">
             Battery: {{ display.batteryPercentage }}%
@@ -19,23 +35,25 @@
             Warning: {{ display.warningMessage }}
           </b-col>
         </b-row>
+                <b-row>
+          <b-col>
+            Image hash: {{ display.currentImageHash || "No hash (display did not request the image yet)" }}
+          </b-col>
+        </b-row>
         <b-row>
           <b-col v-if="display.state">
             <span v-if="!display.state.isSleeping">Is Sleeping</span>
             <span v-if="display.state.isSleeping">Is Awake</span>
           </b-col>
         </b-row>
+
         <b-row>
-          <b-col v-if="display.resolution">
-            Resolution: {{ display.resolution.width }} x
-            {{ display.resolution.height }} ({{ display.resolution.bitDepth }}
-            bit)
-          </b-col>
-        </b-row>
-        <b-row v-if="display.lastState">
-          <b-col>
+          <b-col v-if="display.lastState">
             Last State at
             {{ display.lastState | moment("dddd, MMMM Do YYYY, h:mm:ss a") }}
+          </b-col>
+          <b-col v-else class="errorMessage">
+            No state, check if display is working
           </b-col>
         </b-row>
 
@@ -78,7 +96,7 @@
             display.uuid
           }?withTextFields=true&x=${Date.now()}`"
           fluid
-          alt="Cannot load preview"
+          alt="No image displayed"
         />
       </b-col>
     </b-row>

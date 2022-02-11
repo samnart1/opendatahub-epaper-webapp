@@ -114,7 +114,7 @@
               row.item.uuid
             }?withTextFields=true&x=${Date.now()}`"
             fluid
-            alt="Cannot load preview"
+            alt="No preview, edit the event and include an image"
           ></b-img>
         </template>
       </b-table>

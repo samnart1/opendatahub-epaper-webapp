@@ -32,6 +32,7 @@
           <b-form-input
             :value="row.item.fontSize"
             @input="handleInput($event, row.index, 'fontSize')"
+            type="number"
           ></b-form-input>
         </b-col>
       </template>
@@ -40,6 +41,7 @@
           <b-form-input
             :value="row.item.xPos"
             @input="handleInput($event, row.index, 'xPos')"
+            type="number"
           ></b-form-input>
         </b-col>
       </template>
@@ -48,6 +50,7 @@
           <b-form-input
             :value="row.item.yPos"
             @input="handleInput($event, row.index, 'yPos')"
+            type="number"
           ></b-form-input>
         </b-col>
       </template>

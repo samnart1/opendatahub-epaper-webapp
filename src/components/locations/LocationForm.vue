@@ -2,7 +2,7 @@
   <b-card :title="pageTitle">
     <b-card-text>
       <b-form @submit.prevent="submitLocation">
-        <b-form-input v-model="name" label="Name" placeholder="Enter a name" />
+        <b-form-input required v-model="name" label="Name" placeholder="Enter a name" />
         <b-form-input
           v-model="description"
           label="Description"
@@ -15,7 +15,7 @@
           :options="rooms"
         >
           <template v-slot:first>
-            <b-form-select-option :value="undefined" disabled
+            <b-form-select-option :value="null" disabled
               >Select room...</b-form-select-option
             >
           </template>
@@ -35,7 +35,10 @@ export default {
     locationId: String,
     initialName: String,
     initialDescription: String,
-    initialRoomCode: String,
+    initialRoomCode: {
+      type: String,
+      default: null
+    },
   },
   data() {
     return {
