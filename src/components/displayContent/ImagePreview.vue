@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  props: ["imageSrc", "imageFields"],
+  props: ["imageSrc", "imageFields", "focusedFieldIndex"],
   created() {
     //To prevent duplicate ids between separate instances
     this.canvasid = Math.ceil(Math.random() * 1000000);
@@ -45,6 +45,9 @@ export default {
         this.refreshImageCanvas();
       },
     },
+    focusedFieldIndex() {
+      this.refreshImageCanvas();
+    },
   },
   methods: {
     refreshImageCanvas() {
@@ -53,12 +56,29 @@ export default {
         let context = canvas.getContext("2d");
 
         context.drawImage(this.previewImg, 0, 0);
-        context.lineWidth = 1;
+        context.lineWidth = 3;
 
         if (this.imageFields) {
-          this.imageFields.forEach((f) => {
+          this.imageFields.forEach((f, index) => {
             context.font = `${f.fontSize}px sans-serif`;
             context.fillText(f.customText, f.xPos, f.yPos);
+
+            if (this.focusedFieldIndex === index) {
+              //Draw text field boundaries
+              let yPos = parseInt(f.yPos);
+              this.drawDashedLine(
+                context,
+                0,
+                yPos - parseInt(f.fontSize),
+                canvas.width
+              );
+              this.drawDashedLine(
+                context,
+                0,
+                yPos + parseInt(f.height) - parseInt(f.fontSize),
+                canvas.width
+              );
+            }
           });
         }
       }
@@ -75,6 +95,13 @@ export default {
       } else {
         this.previewImg.src = "";
       }
+    },
+    drawDashedLine(canvasContext, xPos, yPos, length) {
+      canvasContext.beginPath();
+      canvasContext.setLineDash([13, 15]);
+      canvasContext.moveTo(xPos, yPos);
+      canvasContext.lineTo(length, yPos);
+      canvasContext.stroke();
     },
   },
 };

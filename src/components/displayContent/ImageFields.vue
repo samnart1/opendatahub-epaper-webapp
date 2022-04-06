@@ -6,53 +6,60 @@
       head-variant="dark"
       :items="imageFields"
       :fields="tableColumns"
+      selectable
+      select-mode="single"
+      no-select-on-click
+      ref="fieldTable"
     >
       <template v-slot:cell(fieldType)="row">
-        <b-col>
-          <b-form-select
-            :value="row.item.fieldType"
-            :options="fieldTypes"
-            @input="onFieldTypeChange($event, row)"
-          >
-          </b-form-select>
-        </b-col>
+        <b-form-select
+          :value="row.item.fieldType"
+          :options="fieldTypes"
+          @input="onFieldTypeChange($event, row)"
+          @click="selectRow(row.index)"
+        >
+        </b-form-select>
       </template>
       <template v-slot:cell(text)="row">
-        <b-col>
-          <b-form-input
-            type="text"
-            :value="row.item.customText"
-            :disabled="row.item.fieldType != 'CUSTOM_TEXT'"
-            @input="handleInput($event, row.index, 'customText')"
-          ></b-form-input>
-        </b-col>
+        <b-form-textarea
+          type="text"
+          :value="row.item.customText"
+          :disabled="row.item.fieldType != 'CUSTOM_TEXT'"
+          @input="handleInput($event, row.index, 'customText')"
+          @click="selectRow(row.index)"
+        ></b-form-textarea>
       </template>
       <template v-slot:cell(fontSize)="row">
-        <b-col>
-          <b-form-input
-            :value="row.item.fontSize"
-            @input="handleInput($event, row.index, 'fontSize')"
-            type="number"
-          ></b-form-input>
-        </b-col>
+        <b-form-input
+          :value="row.item.fontSize"
+          @input="handleInput($event, row.index, 'fontSize')"
+          type="number"
+          @click="selectRow(row.index)"
+        ></b-form-input>
       </template>
       <template v-slot:cell(xPos)="row">
-        <b-col>
-          <b-form-input
-            :value="row.item.xPos"
-            @input="handleInput($event, row.index, 'xPos')"
-            type="number"
-          ></b-form-input>
-        </b-col>
+        <b-form-input
+          :value="row.item.xPos"
+          @input="handleInput($event, row.index, 'xPos')"
+          type="number"
+          @click="selectRow(row.index)"
+        ></b-form-input>
       </template>
       <template v-slot:cell(yPos)="row">
-        <b-col>
-          <b-form-input
-            :value="row.item.yPos"
-            @input="handleInput($event, row.index, 'yPos')"
-            type="number"
-          ></b-form-input>
-        </b-col>
+        <b-form-input
+          :value="row.item.yPos"
+          @input="handleInput($event, row.index, 'yPos')"
+          type="number"
+          @click="selectRow(row.index)"
+        ></b-form-input>
+      </template>
+      <template v-slot:cell(height)="row">
+        <b-form-input
+          :value="row.item.height"
+          @input="handleInput($event, row.index, 'height')"
+          type="number"
+          @click="selectRow(row.index)"
+        ></b-form-input>
       </template>
       <template v-slot:cell(options)="row">
         <b-button variant="danger" @click="rowDeleteClick(row)" class="mr-2">
@@ -73,9 +80,11 @@ const fieldTypes = [
   { value: "EVENT_DESCRIPTION", text: "Event description" },
   { value: "EVENT_START_DATE", text: "Event start date" },
   { value: "EVENT_END_DATE", text: "Event end date" },
+  { value: "EVENT_ORGANIZER", text: "Event organizer" },
   { value: "UPCOMING_EVENT_DESCRIPTION", text: "Upcoming event description" },
   { value: "UPCOMING_EVENT_START_DATE", text: "Upcoming event start date" },
   { value: "UPCOMING_EVENT_END_DATE", text: "Upcoming event end date" },
+  { value: "UPCOMING_EVENT_ORGANIZER", text: "Upcoming event organizer" },
 ];
 
 export default {
@@ -91,12 +100,17 @@ export default {
         { key: "fontSize", sortable: false },
         { key: "xPos", sortable: false },
         { key: "yPos", sortable: false },
+        { key: "height", sortable: false },
         { key: "options", sortable: false },
       ],
+      selectedRow: 0,
     };
   },
   created() {
     this.fieldTypes = fieldTypes;
+  },
+  mounted() {
+    this.selectRow(this.selectedRow);
   },
   methods: {
     copyImageFields() {
@@ -126,6 +140,7 @@ export default {
         fontSize: 20,
         xPos: 50,
         yPos: 50,
+        height: 30,
         customText: "",
       });
       this.$emit("input", fields);
@@ -135,6 +150,16 @@ export default {
       fields[index][column] = value;
       this.$emit("input", fields);
     },
+    selectRow(index) {
+      if (!this.$refs.fieldTable.isRowSelected(index)) {
+        this.$refs.fieldTable.selectRow(index);
+        this.selectedRow = index;
+        this.$emit("selectedRowChange", index);
+      }
+    },
+  },
+  updated() {
+    this.selectRow(this.selectedRow);
   },
 };
 </script>

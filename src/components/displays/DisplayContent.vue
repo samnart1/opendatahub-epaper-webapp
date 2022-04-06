@@ -27,11 +27,10 @@
             >
             </b-form-select>
           </b-form-group>
-          <b-card>
-            <b-card-text>
-              <ImageFields v-model="imageFields"></ImageFields>
-            </b-card-text>
-          </b-card>
+          <ImageFields
+            v-model="imageFields"
+            @selectedRowChange="onSelectedRowChange"
+          ></ImageFields>
         </b-card-text>
       </b-card>
       Image preview
@@ -39,6 +38,7 @@
         class="image_preview"
         :imageSrc="imageSrc"
         :imageFields="imageFields"
+        :focusedFieldIndex="focusedFieldIndex"
       ></ImagePreview>
     </div>
     <div>
@@ -69,6 +69,7 @@ export default {
       selectedTemplateId: null,
       image: null,
       imageFields: this.initialImageFields || [],
+      focusedFieldIndex: null,
     };
   },
   computed: {
@@ -128,6 +129,9 @@ export default {
     },
     onIgnoreScheduleChange(checked) {
       this.$emit("onIgnoreScheduleChange", this.displayUuid, checked);
+    },
+    onSelectedRowChange(index) {
+      this.focusedFieldIndex = index;
     },
   },
 };

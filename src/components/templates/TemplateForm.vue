@@ -17,7 +17,10 @@
           <b-form-file v-model="image" accept="image/*"></b-form-file>
           <b-card>
             <b-card-text>
-              <ImageFields v-model="imageFields"></ImageFields>
+              <ImageFields
+                v-model="imageFields"
+                @selectedRowChange="onSelectedRowChange"
+              ></ImageFields>
             </b-card-text>
           </b-card>
         </b-card-text>
@@ -27,6 +30,7 @@
         class="image_preview"
         :imageSrc="imageSrc"
         :imageFields="imageFields"
+        :focusedFieldIndex="focusedFieldIndex"
       ></ImagePreview>
     </div>
     <div>
@@ -63,6 +67,7 @@ export default {
       description: this.initialDescription,
       image: null,
       imageFields: this.initialImageFields || [],
+      focusedFieldIndex: null
     };
   },
   computed: {
@@ -117,6 +122,9 @@ export default {
           );
         });
     },
+    onSelectedRowChange(index) {
+      this.focusedFieldIndex = index;
+    }
   },
 };
 </script>
