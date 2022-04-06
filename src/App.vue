@@ -43,7 +43,7 @@ export default {
   name: "app",
   data() {
     return {
-      username: null, 
+      username: null,
       routes: [
         { name: "Displays", link: "/displays" },
         { name: "Locations", link: "/locations" },
@@ -64,19 +64,56 @@ export default {
     },
     dataLoaded() {
       return this.$store.state.dataLoaded;
-    }
+    },
   },
   mounted() {
     if (this.authenticated) {
       this.$keycloak.loadUserInfo().then((info) => {
         this.username = info.name;
       });
-    } 
+    }
+
+    if (!localStorage.getItem("noPrivacyMessage")) {
+      this.showPrivacyToast();
+    }
   },
   methods: {
     logout() {
       const redirectPath = window.location.origin + "/";
       this.$keycloak.logout({ redirectUri: redirectPath });
+    },
+    showPrivacyToast() {
+      const id = `privacy-toast`;
+      const $okButton = this.$createElement(
+        "b-button",
+        {
+          on: {
+            click: () => {
+              this.$bvToast.hide(id);
+              localStorage.setItem("noPrivacyMessage", true);
+            },
+          },
+          class: "toastCloseButton",
+        },
+        "OK, don't show again"
+      );
+
+      // Create the toast
+      this.$bvToast.toast(
+        [
+          "This site stores information regarding user identification. This information is necessary for the site to function.",
+          $okButton,
+        ],
+        {
+          id: id,
+          title: "",
+          toastClass: "privacyToast",
+          toaster: "b-toaster-bottom-center",
+          variant: "info",
+          noAutoHide: true,
+          noCloseButton: true,
+        }
+      );
     },
   },
 };
@@ -123,5 +160,14 @@ export default {
 .userBox {
   border-radius: 8px;
   border: 2px solid #aaaaaa;
+}
+
+.privacyToast {
+  padding-bottom: 35px;
+}
+
+.toastCloseButton {
+  float: right;
+  margin-top: 20px;
 }
 </style>
