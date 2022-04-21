@@ -53,6 +53,14 @@
           @click="selectRow(row.index)"
         ></b-form-input>
       </template>
+      <template v-slot:cell(width)="row">
+        <b-form-input
+          :value="row.item.width"
+          @input="handleInput($event, row.index, 'width')"
+          type="number"
+          @click="selectRow(row.index)"
+        ></b-form-input>
+      </template>
       <template v-slot:cell(height)="row">
         <b-form-input
           :value="row.item.height"
@@ -100,6 +108,7 @@ export default {
         { key: "fontSize", sortable: false },
         { key: "xPos", sortable: false },
         { key: "yPos", sortable: false },
+        { key: "width", sortable: false },
         { key: "height", sortable: false },
         { key: "options", sortable: false },
       ],
@@ -140,6 +149,7 @@ export default {
         fontSize: 20,
         xPos: 50,
         yPos: 50,
+        width: 300,
         height: 30,
         customText: "",
       });

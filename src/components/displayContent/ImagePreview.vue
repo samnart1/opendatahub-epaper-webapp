@@ -65,19 +65,31 @@ export default {
 
             if (this.focusedFieldIndex === index) {
               //Draw text field boundaries
-              let yPos = parseInt(f.yPos);
+              const xPos = parseInt(f.xPos);
+              const yPos = parseInt(f.yPos) - parseInt(f.fontSize);
+              const width = parseInt(f.width);
+              const height = parseInt(f.height);
+
+              //Draw upper border
+              this.drawDashedLine(context, xPos, yPos, xPos + width, yPos);
+              //Draw right border
               this.drawDashedLine(
                 context,
-                0,
-                yPos - parseInt(f.fontSize),
-                canvas.width
+                xPos + width,
+                yPos,
+                xPos + width,
+                yPos + height
               );
+              //Draw bottom border
               this.drawDashedLine(
                 context,
-                0,
-                yPos + parseInt(f.height) - parseInt(f.fontSize),
-                canvas.width
+                xPos,
+                yPos + height,
+                xPos + width,
+                yPos + height
               );
+              //Draw left border
+              this.drawDashedLine(context, xPos, yPos, xPos, yPos + height);
             }
           });
         }
@@ -96,11 +108,11 @@ export default {
         this.previewImg.src = "";
       }
     },
-    drawDashedLine(canvasContext, xPos, yPos, length) {
+    drawDashedLine(canvasContext, x1, y1, x2, y2) {
       canvasContext.beginPath();
       canvasContext.setLineDash([13, 15]);
-      canvasContext.moveTo(xPos, yPos);
-      canvasContext.lineTo(length, yPos);
+      canvasContext.moveTo(x1, y1);
+      canvasContext.lineTo(x2, y2);
       canvasContext.stroke();
     },
   },
