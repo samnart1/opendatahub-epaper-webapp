@@ -3,11 +3,11 @@ services:
   app:
     build:
      context: .
-     dockerfile: docker/dockerfile-node
+     dockerfile: infrastructure/docker/dockerfile-node
     volumes:
        - ./:/code
     working_dir: /code
-    command: yarn serve
+    command: sh -c "test -d node_modules || npm install; npm serve"
     env_file: .env
     ports:
       - "3000:8080"
