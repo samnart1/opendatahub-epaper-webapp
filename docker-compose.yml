@@ -7,7 +7,7 @@ services:
     volumes:
        - ./:/code
     working_dir: /code
-    command: sh -c "test -d node_modules || npm install; npm serve"
+    command: sh -c "test -d node_modules || npm install; npm run serve"
     env_file: .env
     ports:
       - "3000:8080"
