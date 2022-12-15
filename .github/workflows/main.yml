@@ -65,8 +65,8 @@ jobs:
       - name: Create .env file
         uses: noi-techpark/github-actions/env-file@v2
         env:
-          X_VUE_APP_API_URL: "https://api.epaper.opendatahub.bz.it"
-          X_VUE_APP_KEYCLOAK_URL: "https://auth.opendatahub.bz.it/auth"
+          X_VUE_APP_API_URL: "https://api.epaper.opendatahub.com"
+          X_VUE_APP_KEYCLOAK_URL: "https://auth.opendatahub.com/auth"
           X_VUE_APP_KEYCLOAK_REALM: "noi"
           X_VUE_APP_KEYCLOAK_CLIENT_ID: "it.bz.opendatahub.epaper.web"
           X_VUE_APP_KEYCLOAK_RESOURCE_CLIENT_ID: "it.bz.opendatahub.epaper.api"
