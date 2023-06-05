@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # edisplay-frontend
 Frontend to manage edisplay-backend.
 Has all CRUD operations implemented to manage Displays, Locations, Connections and Templates.

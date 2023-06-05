@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
   <div>
     <b-button variant="success" to="/template-form" class="mb-2">
