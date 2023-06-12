@@ -3,6 +3,6 @@ Upstream-Name: it.bz.opendatahub.epaper.webapp
 Upstream-Contact: NOI Techpark <digital@noi.bz.it>
 Source: https://github.com/noi-techpark/it.bz.opendatahub.epaper.webapp
 
-Files: .github/* .gitignore infrastructure/* .env.example *.json src/assets/* public/favicon.ico
+Files: .github/* .gitignore infrastructure/* .env.example .pre-commit-config.yaml *.json src/assets/* public/favicon.ico
 Copyright: (c) NOI Techpark <digital@noi.bz.it>
 License: CC0-1.0
