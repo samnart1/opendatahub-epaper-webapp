@@ -9,7 +9,7 @@ Frontend to manage edisplay-backend.
 Has all CRUD operations implemented to manage Displays, Locations, Connections and Templates.
 Fully created with [Vue.js](https://vuejs.org/)
 
-![REUSE Compliance](https://github.com/noi-techpark/it.bz.opendatahub.epaper.webapp/actions/workflows/reuse.yml/badge.svg)
+[![REUSE Compliance](https://github.com/noi-techpark/it.bz.opendatahub.epaper.webapp/actions/workflows/reuse.yml/badge.svg)](https://github.com/noi-techpark/odh-docs/wiki/REUSE#badges)
 [![CI/CD](https://github.com/noi-techpark/it.bz.opendatahub.epaper.webapp/actions/workflows/main.yml/badge.svg)](https://github.com/noi-techpark/it.bz.opendatahub.epaper.webapp/actions/workflows/main.yml)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
