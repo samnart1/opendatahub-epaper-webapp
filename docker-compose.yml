@@ -14,4 +14,4 @@ services:
     command: sh -c "test -d node_modules || npm install; npm run serve"
     env_file: .env
     ports:
-      - "3000:8080"
+      - "3000:3000"
