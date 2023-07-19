@@ -85,6 +85,8 @@ export default {
           )?.name;
           l.rooms.push(roomName);
         }
+        // transform to string
+        l.rooms = l.rooms.toString().replace(",", ", ");
       });
       return locations;
     },
