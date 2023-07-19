@@ -15,10 +15,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           placeholder="Enter a description"
         />
         <b-form-select
-          v-model="roomCode"
+          v-model="roomCodes"
           value-field="code"
           text-field="name"
           :options="rooms"
+          multiple
         >
           <template v-slot:first>
             <b-form-select-option :value="null" disabled
@@ -41,7 +42,7 @@ export default {
     locationId: String,
     initialName: String,
     initialDescription: String,
-    initialRoomCode: {
+    initialRoomCodes: {
       type: String,
       default: null
     },
@@ -50,7 +51,7 @@ export default {
     return {
       name: this.initialName,
       description: this.initialDescription,
-      roomCode: this.initialRoomCode,
+      roomCodes: this.initialRoomCodes,
     };
   },
   computed: {
@@ -63,8 +64,8 @@ export default {
   },
   methods: {
     submitLocation() {
-      const { name, roomCode, description } = this;
-      const data = { name, roomCode, description };
+      const { name, roomCodes, description } = this;
+      const data = { name, roomCodes, description };
 
       let storeOperation;
       if (this.editMode) {

@@ -25,9 +25,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         </b-col>
       </template>
 
-      <template v-slot:cell(room)="row">
+      <template v-slot:cell(rooms)="row">
         <b-col>
-          {{ row.item.room }}
+          {{ row.item.rooms }}
         </b-col>
       </template>
 
@@ -64,7 +64,7 @@ export default {
     return {
       fields: [
         { key: "name", sortable: true },
-        { key: "room", sortable: true },
+        { key: "rooms", sortable: true },
         { key: "description", sortable: true },
         { key: "options", sortable: false },
       ],
@@ -75,10 +75,16 @@ export default {
   computed: {
     locations() {
       let locations = this.$store.state.locations;
+      // eslint-disable-next-line no-console
+      // console.log(locations);
       locations.forEach((l) => {
-        l.room = this.$store.state.rooms.find(
-          (r) => r.code === l.roomCode
-        )?.name;
+        l.rooms = [];
+        for (let code of l.roomCodes) {
+          let roomName = this.$store.state.rooms.find(
+            (r) => code == r.code
+          )?.name;
+          l.rooms.push(roomName);
+        }
       });
       return locations;
     },
