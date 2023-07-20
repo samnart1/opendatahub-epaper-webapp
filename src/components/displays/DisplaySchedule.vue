@@ -139,6 +139,7 @@ export default {
     return {
       schedulerFields: [
         { key: "eventDescription", sortable: true },
+        { key: "spaceDesc", sortable: true },
         { key: "startDate", sortable: true },
         { key: "endDate", sortable: true },
         { key: "options", sortable: false },
