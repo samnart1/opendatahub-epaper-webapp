@@ -7,8 +7,6 @@ import Router from "vue-router";
 import Displays from "@/components/displays/Displays.vue";
 import DisplayForm from "@/components/displays/DisplayForm.vue";
 import Login from "@/components/Login.vue";
-import Locations from "@/components/locations/Locations.vue";
-import LocationForm from "@/components/locations/LocationForm.vue";
 import Templates from "@/components/templates/Templates.vue";
 import TemplateForm from "@/components/templates/TemplateForm.vue";
 import Unauthorized from "@/components/Unauthorized.vue";
@@ -55,23 +53,6 @@ const router = new Router({
       path: "/display-form",
       name: "Display Form",
       component: DisplayForm,
-      props: true,
-      meta: {
-        isAuthenticated: true
-      }
-    },
-    {
-      path: "/locations",
-      name: "Locations",
-      component: Locations,
-      meta: {
-        isAuthenticated: true
-      }
-    },
-    {
-      path: "/location-form",
-      name: "Location Form",
-      component: LocationForm,
       props: true,
       meta: {
         isAuthenticated: true
