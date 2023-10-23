@@ -11,7 +11,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     displays: [],
-    locations: [],
     templates: [],
     resolutions: [],
     displaySchedules: {},
@@ -23,7 +22,6 @@ export default new Vuex.Store({
 
   getters: {
     displays: state => state.displays,
-    locations: state => state.locations,
     templates: state => state.templates,
     rooms: state => state.rooms,
     resolutions: state => state.resolutions,
@@ -38,9 +36,6 @@ export default new Vuex.Store({
         display.isLoading = false;
         display.inverted = false;
       })
-    },
-    SET_LOCATIONS(state, locations) {
-      state.locations = locations;
     },
     SET_TEMPLATES(state, templates) {
       state.templates = templates;
@@ -65,9 +60,6 @@ export default new Vuex.Store({
       display.isLoading = false;
       display.inverted = false;
     },
-    ADD_LOCATION(state, location) {
-      state.locations.push(location);
-    },
     ADD_TEMPLATE(state, template) {
       state.templates.push(template);
     },
@@ -84,12 +76,6 @@ export default new Vuex.Store({
       var index = state.displays.indexOf(display);
       if (index > -1) {
         state.displays.splice(index, 1);
-      }
-    },
-    DELETE_LOCATION(state, location) {
-      var index = state.locations.indexOf(location);
-      if (index > -1) {
-        state.locations.splice(index, 1);
       }
     },
     DELETE_TEMPLATE(state, template) {
@@ -111,17 +97,6 @@ export default new Vuex.Store({
       );
       if (index > -1) {
         state.displays[index] = updatedDisplay;
-      }
-    },
-
-    UPDATE_LOCATION(state, updatedLocation) {
-      var index = state.locations.indexOf(
-        state.locations.filter(
-          location => location.uuid == updatedLocation.uuid
-        )[0]
-      );
-      if (index > -1) {
-        state.locations[index] = updatedLocation;
       }
     },
 
@@ -216,8 +191,6 @@ export default new Vuex.Store({
         axios
           .get(this.state.URI + `/display/all`, this.state.axiosKeycloakConfig),
         axios
-          .get(this.state.URI + `/location/all`, this.state.axiosKeycloakConfig),
-        axios
           .get(this.state.URI + `/template/all`, this.state.axiosKeycloakConfig),
         axios
           .get(this.state.URI + `/resolution/all`, this.state.axiosKeycloakConfig),
@@ -225,10 +198,9 @@ export default new Vuex.Store({
           .get(this.state.URI + `/NOI-Place/all`, this.state.axiosKeycloakConfig)
       ]).then(responses => {
         commit("SET_DISPLAYS", responses[0].data);
-        commit("SET_LOCATIONS", responses[1].data);
-        commit("SET_TEMPLATES", responses[2].data);
-        commit("SET_RESOLUTIONS", responses[3].data);
-        commit("SET_ROOMS", responses[4].data);
+        commit("SET_TEMPLATES", responses[1].data);
+        commit("SET_RESOLUTIONS", responses[2].data);
+        commit("SET_ROOMS", responses[3].data);
         commit("SET_DATA_LOADED", true);
       }).catch(() => commit("SET_DATA_LOADED", true))
     },
@@ -245,21 +217,6 @@ export default new Vuex.Store({
         .post(URL, display, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("ADD_DISPLAY", response.data);
-          return Promise.resolve(response.data);
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
-          return Promise.reject(err.response.data);
-        });
-    },
-
-    createLocation({ commit }, location) {
-      const URL = this.state.URI + "/location/create";
-      return axios
-        .post(URL, location, this.state.axiosKeycloakConfig)
-        .then(response => {
-          commit("ADD_LOCATION", response.data);
           return Promise.resolve(response.data);
         })
         .catch(err => {
@@ -313,20 +270,6 @@ export default new Vuex.Store({
         });
     },
 
-    deleteLocation({ commit }, location) {
-      const URL = this.state.URI + "/location/delete/" + location.uuid;
-      return axios
-        .delete(URL, this.state.axiosKeycloakConfig)
-        .then(() => {
-          commit("DELETE_LOCATION", location);
-          return Promise.resolve();
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
-        });
-    },
-
     deleteTemplate({ commit }, template) {
       const URL = this.state.URI + "/template/delete/" + template.uuid;
       return axios
@@ -363,21 +306,6 @@ export default new Vuex.Store({
         .put(URL, data, this.state.axiosKeycloakConfig)
         .then(response => {
           commit("UPDATE_DISPLAY", response.data);
-          return Promise.resolve();
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log(err);
-          return Promise.reject(err.response.data);
-        });
-    },
-
-    updateLocation({ commit }, location) {
-      const URL = this.state.URI + "/location/update";
-      return axios
-        .put(URL, location, this.state.axiosKeycloakConfig)
-        .then(() => {
-          commit("UPDATE_LOCATION", location);
           return Promise.resolve();
         })
         .catch(err => {
