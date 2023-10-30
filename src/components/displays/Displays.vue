@@ -107,8 +107,7 @@ export default {
     formatDisplayRows() {
       if (!this.displays) return [];
       return this.displays.map((item) => {
-        // item.location = this.getLocation(item.locationUuid);
-        // item.locationName = item.location ? item.location.name : "No location";
+        item.rooms = this.$store.state.rooms.filter((room)=> item.roomCodes.includes(room.uuid))
         item.lastState = item.lastState && new Date(item.lastState);
         if (
           !item.lastState ||
