@@ -91,7 +91,7 @@ export default {
       selectedDisplay: null,
       fields: [
         { key: "name", sortable: true },
-        { key: "rooms", label: "Rooms", sortable: true },
+        { key: "rooms", sortable: true },
         { key: "status", sortable: true },
         { key: "last_state", sortable: false }, // Cannot set "sortKey" for date sorting, need to update bootstrap-vue
         { key: "show_details", sortable: false },
@@ -107,7 +107,7 @@ export default {
     formatDisplayRows() {
       if (!this.displays) return [];
       return this.displays.map((item) => {
-        item.rooms = this.$store.state.rooms.filter((room)=> item.roomCodes.includes(room.uuid))
+        item.rooms = this.$store.state.rooms.filter((room)=> item.roomCodes.includes(room.code))
         item.lastState = item.lastState && new Date(item.lastState);
         if (
           !item.lastState ||
