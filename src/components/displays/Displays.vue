@@ -107,7 +107,7 @@ export default {
     formatDisplayRows() {
       if (!this.displays) return [];
       return this.displays.map((item) => {
-        item.rooms = this.$store.state.rooms.filter((room)=> item.roomCodes.includes(room.code))
+        item.rooms = this.$store.state.rooms.filter((room)=> item.roomCodes.includes(room.code)).map((room)=> room.name)
         item.lastState = item.lastState && new Date(item.lastState);
         if (
           !item.lastState ||
