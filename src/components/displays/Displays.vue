@@ -91,7 +91,7 @@ export default {
       selectedDisplay: null,
       fields: [
         { key: "name", sortable: true },
-        { key: "locationName", label: "Location", sortable: true },
+        { key: "rooms", label: "Rooms", sortable: true },
         { key: "status", sortable: true },
         { key: "last_state", sortable: false }, // Cannot set "sortKey" for date sorting, need to update bootstrap-vue
         { key: "show_details", sortable: false },
@@ -107,8 +107,8 @@ export default {
     formatDisplayRows() {
       if (!this.displays) return [];
       return this.displays.map((item) => {
-        item.location = this.getLocation(item.locationUuid);
-        item.locationName = item.location ? item.location.name : "No location";
+        // item.location = this.getLocation(item.locationUuid);
+        // item.locationName = item.location ? item.location.name : "No location";
         item.lastState = item.lastState && new Date(item.lastState);
         if (
           !item.lastState ||
@@ -165,9 +165,6 @@ export default {
     }
   },
   methods: {
-    getLocation(uuid) {
-      return this.$store.state.locations.find((l) => l.uuid === uuid);
-    },
     setIgnoreSchedule(displayUuid, ignoreFlag) {
       let display = this.displays.find((d) => d.uuid === displayUuid);
       if (display) {

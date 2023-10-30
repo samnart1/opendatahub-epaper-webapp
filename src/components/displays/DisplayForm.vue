@@ -16,14 +16,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         />
         <b-form-input v-model="name" label="Name" placeholder="Enter a name" />
         <b-form-select
-          v-model="locationUuid"
-          :options="locations"
-          value-field="uuid"
+          v-model="roomCodes"
+          value-field="code"
           text-field="name"
+          :options="rooms"
+          multiple
         >
           <template v-slot:first>
             <b-form-select-option :value="null" disabled
-              >Select location...</b-form-select-option
+              >Select room...</b-form-select-option
             >
           </template>
         </b-form-select>
@@ -53,6 +54,10 @@ export default {
         return {};
       },
     },
+    initialRoomCodes: {
+      type: String,
+      default: null,
+    },
   },
   data() {
     return {
@@ -62,11 +67,12 @@ export default {
         ? this.display.resolution.uuid
         : null,
       locationUuid: this.display.locationUuid || null,
+      roomCodes: this.initialRoomCodes,
     };
   },
   computed: {
-    locations() {
-      return this.$store.state.locations;
+    rooms() {
+      return this.$store.state.rooms;
     },
     resolutions() {
       return this.$store.state.resolutions.map((r) => {
@@ -82,13 +88,13 @@ export default {
   },
   methods: {
     submitDisplay() {
-      const { name, uuid, locationUuid, resolutionUuid, display } = this;
+      const { name, uuid, roomCodes, resolutionUuid, display } = this;
 
       const data = {
         ...display,
         name,
         uuid,
-        locationUuid,
+        roomCodes,
         resolution: this.$store.state.resolutions.find(
           (r) => r.uuid === resolutionUuid
         ),

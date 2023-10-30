@@ -51,7 +51,6 @@ export default {
       username: null,
       routes: [
         { name: "Displays", link: "/displays" },
-        { name: "Locations", link: "/locations" },
         { name: "Templates", link: "/templates" },
       ],
       siteName: "eInk Display management site",
