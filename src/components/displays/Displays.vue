@@ -107,9 +107,12 @@ export default {
     formatDisplayRows() {
       if (!this.displays) return [];
       return this.displays.map((item) => {
-        let rooms = this.$store.state.rooms
-          .filter((room) => item.roomCodes.includes(room.code))
-          .map((room) => room.name);
+        let rooms =
+          item.roomCodes == null
+            ? []
+            : this.$store.state.rooms
+                .filter((room) => item.roomCodes.includes(room.code))
+                .map((room) => room.name);
         rooms = rooms.length > 0 ? rooms.join(", ") : "No room assigned";
         item.rooms = rooms;
         item.lastState = item.lastState && new Date(item.lastState);
