@@ -110,8 +110,10 @@ export default {
         let rooms =
           item.roomCodes == null
             ? []
-            : this.$store.state.rooms
-                .filter((room) => item.roomCodes.includes(room.code))
+            : item.roomCodes
+                .map((code) =>
+                  this.$store.state.rooms.find((r) => code == r.code)
+                )
                 .map((room) => room.name);
         rooms = rooms.length > 0 ? rooms.join(", ") : "No room assigned";
         item.rooms = rooms;

@@ -41,12 +41,17 @@ export default new Vuex.Store({
       state.templates = templates;
     },
     SET_ROOMS(state, rooms) {
-      state.rooms = rooms.map((room) => {
+      // prepare structure
+      rooms = rooms.map((room) => {
         return {
           name: room.name ? `${room.name} (${room.label})` : room.label,
           code: room.code,
         };
       });
+      // sort alphabetically
+      rooms.sort((a, b) => a.name.localeCompare(b.name))
+      // assign
+      state.rooms = rooms
     },
     SET_RESOLUTIONS(state, resolutions) {
       state.resolutions = resolutions;

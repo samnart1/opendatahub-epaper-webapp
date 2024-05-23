@@ -8,6 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   <b-form @submit.prevent="submitTemplate">
     <div class="editor">
       <b-card :title="pageTitle" class="form_card">
+        <!-- general info name, description -->
         <b-card-text>
           <b-form-input
             v-model="name"
@@ -20,7 +21,32 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             label="Description"
             placeholder="Enter a description"
           />
+
+          <b-input-group>
+            <!-- resolution -->
+            <b-form-select
+              :disabled="editMode"
+              v-model="resolution"
+              :options="resolutions"
+            >
+            </b-form-select>
+
+            <!-- max rooms -->
+            <b-form-select v-model="maxRooms">
+              <b-form-select-option selected :value="1"
+                >1 rooms</b-form-select-option
+              >
+              <b-form-select-option :value="2">2 rooms</b-form-select-option>
+              <b-form-select-option :value="3">3 rooms</b-form-select-option>
+              <b-form-select-option :value="4">4 rooms</b-form-select-option>
+              <b-form-select-option :value="5">5 rooms</b-form-select-option>
+              <b-form-select-option :value="6">6 rooms</b-form-select-option>
+            </b-form-select>
+          </b-input-group>
+          <!-- image -->
           <b-form-file v-model="image" accept="image/*"></b-form-file>
+
+          <!-- content preview -->
           <b-card>
             <b-card-text>
               <ImageFields
@@ -30,22 +56,24 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             </b-card-text>
           </b-card>
         </b-card-text>
+        <div>
+          <b-button variant="danger" to="/templates" class="mt-2 mr-2">
+            Cancel
+          </b-button>
+          <b-button variant="success" type="submit" class="mt-2">
+            Save
+          </b-button>
+        </div>
       </b-card>
-      Template image preview
       <ImagePreview
         class="image_preview"
         :imageSrc="imageSrc"
         :imageFields="imageFields"
         :focusedFieldIndex="focusedFieldIndex"
+        :width="resolution ? resolution.width : 1440"
+        :height="resolution ? resolution.height : 2560"
+        :maxRooms="maxRooms"
       ></ImagePreview>
-    </div>
-    <div>
-      <b-button variant="danger" to="/templates" class="mt-2 mr-2">
-        Cancel
-      </b-button>
-      <b-button variant="success" type="submit" class="mt-2">
-        Save template
-      </b-button>
     </div>
   </b-form>
 </template>
@@ -58,10 +86,12 @@ import ImagePreview from "@/components/displayContent/ImagePreview.vue";
 export default {
   props: {
     editMode: Boolean,
-    initialName: String,
-    initialDescription: String,
-    initialImageFields: Array,
-    templateId: String,
+    template: {
+      type: Object,
+      default: function () {
+        return {};
+      },
+    },
   },
   components: {
     ImageFields,
@@ -69,11 +99,15 @@ export default {
   },
   data() {
     return {
-      name: this.initialName,
-      description: this.initialDescription,
+      name: this.template.name,
+      description: this.template.description,
       image: null,
-      imageFields: this.initialImageFields || [],
-      focusedFieldIndex: null
+      maxRooms: this.template.maxRooms || 1,
+      imageFields: this.template.displayContent
+        ? this.template.displayContent.imageFields
+        : [],
+      focusedFieldIndex: null,
+      resolution: this.template.resolution || null,
     };
   },
   computed: {
@@ -83,41 +117,59 @@ export default {
     imageSrc() {
       return this.editMode && !this.image
         ? `${this.$store.state.URI}/template/get-image/${
-            this.templateId
+            this.template.uuid
           }?x=${Date.now()}`
         : this.image;
     },
+    resolutions() {
+      return this.$store.state.resolutions.map((r) => {
+        return {
+          value: r,
+          text: `${r.width} x ${r.height} (${r.bitDepth} bit)`,
+        };
+      });
+    },
+  },
+  mounted() {
+    // set resolution to first, if not set yet
+    if (this.resolution == null) {
+      this.resolution = this.resolutions[0].value;
+    }
   },
 
   methods: {
     submitTemplate() {
-      const { name, description, imageFields, image, templateId } = this;
+      const { name, description, resolution, maxRooms, image, imageFields } =
+        this;
       const templateContent = {
         image,
         displayContent: {
           imageFields,
         },
-        templateUuid: templateId,
       };
-      const template = {
+      const newTemplate = {
         name,
         description,
+        maxRooms,
+        resolution,
       };
 
       let storeOperation;
       if (this.editMode) {
         storeOperation = "updateTemplate";
-        template.uuid = templateId;
+        newTemplate.uuid = this.template.uuid;
+        templateContent.templateUuid = this.template.uuid;
       } else {
         storeOperation = "createTemplate";
       }
 
       this.$store
-        .dispatch(storeOperation, template)
+        .dispatch(storeOperation, newTemplate)
         .then((template) => {
           if (template) {
             templateContent.templateUuid = template.uuid;
           }
+          console.log(templateContent);
           return this.$store.dispatch("updateTemplateContent", templateContent);
         })
         .then(() => this.$router.replace("templates"))
@@ -130,7 +182,7 @@ export default {
     },
     onSelectedRowChange(index) {
       this.focusedFieldIndex = index;
-    }
+    },
   },
 };
 </script>
@@ -140,12 +192,12 @@ export default {
   overflow: auto;
 }
 .form_card {
-  width: 60%;
+  width: 50%;
   float: left;
   margin-bottom: 5px;
 }
 .image_preview {
-  width: 38%;
+  width: 45%;
 }
 
 /* Responsive layout - makes a one column-layout instead of two-column layout */

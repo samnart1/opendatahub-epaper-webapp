@@ -95,11 +95,7 @@ export default {
       if (template) {
         let formProps = {
           editMode: true,
-          initialName: template.name,
-          initialDescription: template.description,
-          initialImageFields:
-            template.displayContent && template.displayContent.imageFields,
-          templateId: template.uuid,
+          template: template,
         };
         this.$router.push({ name: "Template Form", params: formProps });
       }

@@ -5,12 +5,20 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-  <canvas class="image_canvas" :id="canvasid" width="0" height="0"></canvas>
+  <canvas class="imageCanvas" :id="canvasid"></canvas>
 </template>
 
 <script>
 export default {
-  props: ["imageSrc", "imageFields", "focusedFieldIndex"],
+  props: [
+    "editMode",
+    "imageSrc",
+    "imageFields",
+    "focusedFieldIndex",
+    "width",
+    "height",
+    "maxRooms",
+  ],
   created() {
     //To prevent duplicate ids between separate instances
     this.canvasid = Math.ceil(Math.random() * 1000000);
@@ -20,8 +28,8 @@ export default {
     this.previewImg.onerror = () => {
       const canvas = document.getElementById(this.canvasid);
       if (canvas) {
-        canvas.width = 0;
-        canvas.height = 0;
+        canvas.width = this.width;
+        canvas.height = this.height;
       }
     };
     this.previewImg.alt = "";
@@ -54,20 +62,50 @@ export default {
     focusedFieldIndex() {
       this.refreshImageCanvas();
     },
+    width: {
+      handler: function () {
+        this.refreshImageCanvas();
+      },
+    },
+    height: {
+      handler: function () {
+        this.refreshImageCanvas();
+      },
+    },
+    maxRooms: {
+      handler: function () {
+        this.refreshImageCanvas();
+      },
+    },
   },
   methods: {
     refreshImageCanvas() {
       const canvas = document.getElementById(this.canvasid);
       if (this.previewImg && canvas.width > 0 && canvas.height > 0) {
         let context = canvas.getContext("2d");
+        // clear screen
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
-        context.drawImage(this.previewImg, 0, 0);
+        // draw image
+        if (this.previewImg.height > 0 && this.previewImg.width > 0) {
+          context.drawImage(this.previewImg, 0, 0);
+        }
+
         context.lineWidth = 3;
 
         if (this.imageFields) {
           this.imageFields.forEach((f, index) => {
             context.font = `${f.fontSize}px sans-serif`;
             context.fillText(f.customText, f.xPos, f.yPos);
+
+            // draw repeats
+            if (this.maxRooms > 1 && !f.fixed) {
+              let roomHeight = this.height / this.maxRooms;
+              for (let room = 1; room <= this.maxRooms; room++) {
+                let y = parseInt(f.yPos) + (roomHeight * room);
+                context.fillText(f.customText, f.xPos, y);
+              }
+            }
 
             if (this.focusedFieldIndex === index) {
               //Draw text field boundaries
@@ -99,10 +137,18 @@ export default {
             }
           });
         }
+        // draw room split lines
+        if (this.maxRooms > 1) {
+          let roomHeight = this.height / this.maxRooms;
+          for (let i = 1; i < this.maxRooms; i++) {
+            let y = roomHeight * i;
+            this.drawDashedLine(context, 0, y, this.width, y);
+          }
+        }
       }
     },
     applyDataURLToCanvas(newSrc) {
-      var reader = new FileReader();
+      let reader = new FileReader();
 
       reader.onloadend = () => {
         this.previewImg.src = reader.result;
@@ -126,8 +172,9 @@ export default {
 </script>
 
 <style scoped>
-.image_canvas {
-  position: relative;
+.imageCanvas {
   filter: grayscale(100%);
+  border: 2px solid;
+  position: relative;
 }
 </style>
