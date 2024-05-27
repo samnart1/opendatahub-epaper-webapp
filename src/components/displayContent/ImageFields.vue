@@ -83,6 +83,20 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             @input="selectRow(row.index)"
           ></b-form-checkbox>
         </template>
+        <template v-slot:cell(bold)="row">
+          <b-form-checkbox
+            :checked="row.item.bold"
+            @change="handleInput($event, row.index, 'bold')"
+            @input="selectRow(row.index)"
+          ></b-form-checkbox>
+        </template>
+        <template v-slot:cell(italic)="row">
+          <b-form-checkbox
+            :checked="row.item.italic"
+            @change="handleInput($event, row.index, 'italic')"
+            @input="selectRow(row.index)"
+          ></b-form-checkbox>
+        </template>
         <template v-slot:cell(remove)="row">
           <b-button variant="danger" @click="rowDeleteClick(row)" class="mr-2">
             X
@@ -123,6 +137,8 @@ export default {
         { key: "width", sortable: false },
         { key: "height", sortable: false },
         { key: "fixed", sortable: false },
+        { key: "bold", sortable: false },
+        { key: "italic", sortable: false },
         { key: "remove", sortable: false },
       ],
       selectedRow: 0,
@@ -165,6 +181,8 @@ export default {
         width: 800,
         height: 52,
         fixed: false,
+        bold: false,
+        italic: false,
         customText: "CUSTOM_TEXT",
       });
       this.$emit("input", fields);

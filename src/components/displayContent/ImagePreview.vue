@@ -95,14 +95,17 @@ export default {
 
         if (this.imageFields) {
           this.imageFields.forEach((f, index) => {
-            context.font = `${f.fontSize}px sans-serif`;
+            context.font = `${f.italic ? "italic" : ""} ${
+              f.bold ? "bold" : ""
+            } ${f.fontSize}px sans-serif`;
+
             context.fillText(f.customText, f.xPos, f.yPos);
 
             // draw repeats
             if (this.maxRooms > 1 && !f.fixed) {
               let roomHeight = this.height / this.maxRooms;
               for (let room = 1; room <= this.maxRooms; room++) {
-                let y = parseInt(f.yPos) + (roomHeight * room);
+                let y = parseInt(f.yPos) + roomHeight * room;
                 context.fillText(f.customText, f.xPos, y);
               }
             }
