@@ -192,7 +192,6 @@ export default {
           if (template) {
             templateContent.templateUuid = template.uuid;
           }
-          console.log(templateContent);
           return this.$store.dispatch("updateTemplateContent", templateContent);
         })
         .then(() => this.$router.replace("templates"))
