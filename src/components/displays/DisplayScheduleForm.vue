@@ -166,7 +166,7 @@ export default {
         scheduledContentUuid: uuid,
         displayContent: {
           imageFields,
-          padding : Number(padding),
+          padding: Number(padding),
         },
         templateUuid: selectedTemplateId,
       };
@@ -208,6 +208,7 @@ export default {
         template.displayContent.imageFields.map((f) => {
           return { ...f };
         });
+      this.padding = template.displayContent && template.displayContent.padding;
     },
   },
 };

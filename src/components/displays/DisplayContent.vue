@@ -147,6 +147,7 @@ export default {
         template.displayContent.imageFields.map((f) => {
           return { ...f };
         });
+      this.padding = template.displayContent && template.displayContent.padding;
     },
     onIgnoreScheduleChange(checked) {
       this.$emit("onIgnoreScheduleChange", this.displayUuid, checked);
