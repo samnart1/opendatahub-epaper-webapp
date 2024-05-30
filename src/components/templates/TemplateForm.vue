@@ -113,7 +113,10 @@ export default {
       name: this.template.name,
       description: this.template.description,
       image: null,
-      padding: this.template.displayContent.padding || 0,
+      padding:
+        this.template.displayContent == null
+          ? 0
+          : this.template.displayContent.padding || 0,
       maxRooms: this.template.maxRooms || 1,
       imageFields: this.template.displayContent
         ? this.template.displayContent.imageFields
