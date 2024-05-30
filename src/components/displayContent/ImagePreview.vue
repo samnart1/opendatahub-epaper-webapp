@@ -105,6 +105,14 @@ export default {
 
         context.lineWidth = 3;
 
+        // draw room split lines
+        if (this.maxRooms > 1) {
+          for (let i = 1; i < this.maxRooms; i++) {
+            let y = roomHeight * i;
+            this.drawLine(context, 0, y + p, fullWidth, y + p);
+          }
+        }
+
         //Draw header and footer
         if (p > 0) {
           context.strokeStyle = "#e60026";
@@ -168,13 +176,6 @@ export default {
             }
           });
         }
-        // draw room split lines
-        if (this.maxRooms > 1) {
-          for (let i = 1; i < this.maxRooms; i++) {
-            let y = roomHeight * i;
-            this.drawDashedLine(context, 0, y + p, fullWidth, y + p);
-          }
-        }
       }
     },
     applyDataURLToCanvas(newSrc) {
@@ -194,6 +195,12 @@ export default {
     drawDashedLine(canvasContext, x1, y1, x2, y2) {
       canvasContext.beginPath();
       canvasContext.setLineDash([13, 15]);
+      canvasContext.moveTo(x1, y1);
+      canvasContext.lineTo(x2, y2);
+      canvasContext.stroke();
+    },
+    drawLine(canvasContext, x1, y1, x2, y2) {
+      canvasContext.beginPath();
       canvasContext.moveTo(x1, y1);
       canvasContext.lineTo(x2, y2);
       canvasContext.stroke();
