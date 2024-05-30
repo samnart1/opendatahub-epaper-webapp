@@ -45,7 +45,17 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           </b-input-group>
           <!-- image -->
           <b-form-file v-model="image" accept="image/*"></b-form-file>
-
+          <!-- header/footer -->
+          <b-input-group>
+            <label for="padding">Header/Footer size (aka padding)</label>
+            <b-form-input
+              id="padding"
+              label=""
+              v-model="padding"
+              type="number"
+              min="0"
+            ></b-form-input>
+          </b-input-group>
           <!-- content preview -->
           <b-card>
             <b-card-text>
@@ -73,6 +83,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         :width="resolution ? resolution.width : 1440"
         :height="resolution ? resolution.height : 2560"
         :maxRooms="maxRooms"
+        :padding="padding"
       ></ImagePreview>
     </div>
   </b-form>
@@ -102,6 +113,7 @@ export default {
       name: this.template.name,
       description: this.template.description,
       image: null,
+      padding: this.template.displayContent.padding || 0,
       maxRooms: this.template.maxRooms || 1,
       imageFields: this.template.displayContent
         ? this.template.displayContent.imageFields
@@ -139,12 +151,20 @@ export default {
 
   methods: {
     submitTemplate() {
-      const { name, description, resolution, maxRooms, image, imageFields } =
-        this;
+      const {
+        name,
+        padding,
+        description,
+        resolution,
+        maxRooms,
+        image,
+        imageFields,
+      } = this;
       const templateContent = {
         image,
         displayContent: {
           imageFields,
+          padding: Number(padding),
         },
       };
       const newTemplate = {

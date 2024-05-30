@@ -17,6 +17,7 @@ export default {
     "focusedFieldIndex",
     "width",
     "height",
+    "padding",
     "maxRooms",
   ],
   created() {
@@ -67,6 +68,11 @@ export default {
         this.refreshImageCanvas();
       },
     },
+    padding: {
+      handler: function () {
+        this.refreshImageCanvas();
+      },
+    },
     height: {
       handler: function () {
         this.refreshImageCanvas();
@@ -81,6 +87,12 @@ export default {
   methods: {
     refreshImageCanvas() {
       const canvas = document.getElementById(this.canvasid);
+      const p = parseInt(this.padding);
+      const fullHeight = parseInt(this.height);
+      const fullWidth = parseInt(this.width);
+
+      let roomHeight = (fullHeight - p * 2) / this.maxRooms;
+
       if (this.previewImg && canvas.width > 0 && canvas.height > 0) {
         let context = canvas.getContext("2d");
         // clear screen
@@ -93,19 +105,35 @@ export default {
 
         context.lineWidth = 3;
 
+        //Draw header and footer
+        if (p > 0) {
+          context.strokeStyle = "#e60026";
+          // header
+          this.drawDashedLine(context, 0, p, 0 + fullWidth, p);
+          // footer
+          this.drawDashedLine(
+            context,
+            0,
+            fullHeight - p,
+            0 + fullWidth,
+            fullHeight - p
+          );
+
+          context.strokeStyle = "#000000";
+        }
+
         if (this.imageFields) {
           this.imageFields.forEach((f, index) => {
             context.font = `${f.italic ? "italic" : ""} ${
               f.bold ? "bold" : ""
             } ${f.fontSize}px sans-serif`;
 
-            context.fillText(f.customText, f.xPos, f.yPos);
+            context.fillText(f.customText, f.xPos, f.yPos + p);
 
             // draw repeats
             if (this.maxRooms > 1 && !f.fixed) {
-              let roomHeight = this.height / this.maxRooms;
-              for (let room = 1; room <= this.maxRooms; room++) {
-                let y = parseInt(f.yPos) + roomHeight * room;
+              for (let room = 0; room < this.maxRooms; room++) {
+                let y = parseInt(f.yPos) + roomHeight * room + p;
                 context.fillText(f.customText, f.xPos, y);
               }
             }
@@ -113,7 +141,7 @@ export default {
             if (this.focusedFieldIndex === index) {
               //Draw text field boundaries
               const xPos = parseInt(f.xPos);
-              const yPos = parseInt(f.yPos) - parseInt(f.fontSize);
+              const yPos = parseInt(f.yPos) - parseInt(f.fontSize) + p;
               const width = parseInt(f.width);
               const height = parseInt(f.height);
 
@@ -142,10 +170,9 @@ export default {
         }
         // draw room split lines
         if (this.maxRooms > 1) {
-          let roomHeight = this.height / this.maxRooms;
           for (let i = 1; i < this.maxRooms; i++) {
             let y = roomHeight * i;
-            this.drawDashedLine(context, 0, y, this.width, y);
+            this.drawDashedLine(context, 0, y + p, fullWidth, y + p);
           }
         }
       }
@@ -163,6 +190,7 @@ export default {
         this.previewImg.src = "";
       }
     },
+
     drawDashedLine(canvasContext, x1, y1, x2, y2) {
       canvasContext.beginPath();
       canvasContext.setLineDash([13, 15]);
@@ -176,7 +204,7 @@ export default {
 
 <style scoped>
 .imageCanvas {
-  filter: grayscale(100%);
+  /* filter: grayscale(100%); */
   border: 2px solid;
   position: relative;
 }

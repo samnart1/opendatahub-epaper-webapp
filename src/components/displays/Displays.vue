@@ -51,6 +51,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
               selectedDisplay.displayContent &&
               selectedDisplay.displayContent.imageFields
             "
+            :initial-padding="
+              selectedDisplay.displayContent &&
+              selectedDisplay.displayContent.padding
+            "
             :ignore-schedule="selectedDisplay.ignoreScheduledContent"
             @onIgnoreScheduleChange="setIgnoreSchedule"
           ></DisplayContent>

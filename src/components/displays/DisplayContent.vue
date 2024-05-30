@@ -63,6 +63,7 @@ import ImagePreview from "@/components/displayContent/ImagePreview.vue";
 export default {
   props: {
     initialImageFields: Array,
+    initialPadding: Number,
     displayUuid: String,
     ignoreSchedule: Boolean,
   },
@@ -75,6 +76,7 @@ export default {
       selectedTemplateId: null,
       image: null,
       imageFields: this.initialImageFields || [],
+      padding: this.initialPadding || 0,
       focusedFieldIndex: null,
     };
   },
@@ -99,13 +101,15 @@ export default {
 
   methods: {
     submitDisplayContent() {
-      const { selectedTemplateId, imageFields, image, displayUuid } = this;
+      const { selectedTemplateId, padding, imageFields, image, displayUuid } =
+        this;
       const data = {
         image,
         displayUuid,
         templateUuid: selectedTemplateId,
         displayContent: {
           imageFields,
+          padding: Number(padding),
         },
       };
 

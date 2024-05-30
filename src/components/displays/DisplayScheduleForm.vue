@@ -62,6 +62,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         class="image_preview"
         :imageSrc="imageSrc"
         :imageFields="imageFields"
+        :padding="padding"
       ></ImagePreview>
     </div>
     <div class="mb-3 mt-2">
@@ -96,7 +97,8 @@ export default {
     eventId: Number,
     displayUuid: String,
     uuid: String,
-    initialImageFields: Array
+    initialImageFields: Array,
+    initialPadding: Number,
   },
   components: {
     ImageFields,
@@ -112,6 +114,7 @@ export default {
       selectedTemplateId: null,
       image: null,
       imageFields: this.initialImageFields || [],
+      padding: this.initialImageFields || 0,
     };
   },
   computed: {
@@ -145,9 +148,10 @@ export default {
         eventId,
         displayUuid,
         uuid,
-        imageFields, 
+        imageFields,
         image,
-        selectedTemplateId
+        padding,
+        selectedTemplateId,
       } = this;
       const data = {
         startDate,
@@ -162,6 +166,7 @@ export default {
         scheduledContentUuid: uuid,
         displayContent: {
           imageFields,
+          padding : Number(padding),
         },
         templateUuid: selectedTemplateId,
       };
