@@ -43,6 +43,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
               min="0"
             ></b-form-input>
           </b-input-group>
+          <label for="rooms"
+            >This template can support maximal <strong>{{ maxRooms }}</strong>
+            rooms
+          </label>
           <ImageFields
             v-model="imageFields"
             @selectedRowChange="onSelectedRowChange"
@@ -56,6 +60,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         :imageFields="imageFields"
         :padding="padding"
         :focusedFieldIndex="focusedFieldIndex"
+        :maxRooms="maxRooms"
       ></ImagePreview>
     </div>
     <div>
@@ -75,6 +80,7 @@ export default {
   props: {
     initialImageFields: Array,
     initialPadding: Number,
+    initialMaxRooms: Number,
     displayUuid: String,
     ignoreSchedule: Boolean,
   },
@@ -84,11 +90,12 @@ export default {
   },
   data() {
     return {
-      selectedTemplateId: null,
+      selectedTemplateId: this.templateUuid,
       image: null,
       imageFields: this.initialImageFields || [],
       padding: this.initialPadding || 0,
       focusedFieldIndex: null,
+      maxRooms: 1,
     };
   },
   computed: {
@@ -109,7 +116,10 @@ export default {
       }
     },
   },
-
+  mounted() {
+    // let template = this.templates.find((t) => t.uuid === this.templateUuid);
+    // this.maxRooms = template.maxRooms;
+  },
   methods: {
     submitDisplayContent() {
       const { selectedTemplateId, padding, imageFields, image, displayUuid } =
@@ -148,6 +158,7 @@ export default {
           return { ...f };
         });
       this.padding = template.displayContent && template.displayContent.padding;
+      this.maxRooms = template.maxRooms;
     },
     onIgnoreScheduleChange(checked) {
       this.$emit("onIgnoreScheduleChange", this.displayUuid, checked);

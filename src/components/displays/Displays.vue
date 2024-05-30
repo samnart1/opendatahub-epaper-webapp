@@ -47,6 +47,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           <DisplayContent
             lazy
             :display-uuid="selectedDisplay.uuid"
+            :template-uuid="selectedDisplay.templateUuid"
             :initial-image-fields="
               selectedDisplay.displayContent == null
                 ? []

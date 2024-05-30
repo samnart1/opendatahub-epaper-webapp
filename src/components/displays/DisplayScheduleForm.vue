@@ -99,6 +99,7 @@ export default {
     uuid: String,
     initialImageFields: Array,
     initialPadding: Number,
+    initialMaxRooms: Number,
   },
   components: {
     ImageFields,
@@ -115,6 +116,7 @@ export default {
       image: null,
       imageFields: this.initialImageFields || [],
       padding: this.initialPadding || 0,
+      maxRooms: this.initialMaxRooms || 1,
     };
   },
   computed: {
