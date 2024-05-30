@@ -114,7 +114,7 @@ export default {
       selectedTemplateId: null,
       image: null,
       imageFields: this.initialImageFields || [],
-      padding: this.initialImageFields || 0,
+      padding: this.initialPadding || 0,
     };
   },
   computed: {

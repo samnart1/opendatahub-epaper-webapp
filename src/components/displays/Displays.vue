@@ -48,12 +48,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             lazy
             :display-uuid="selectedDisplay.uuid"
             :initial-image-fields="
-              selectedDisplay.displayContent &&
-              selectedDisplay.displayContent.imageFields
+              selectedDisplay.displayContent == null
+                ? []
+                : selectedDisplay.displayContent.imageFields
             "
             :initial-padding="
-              selectedDisplay.displayContent &&
-              selectedDisplay.displayContent.padding
+              selectedDisplay.displayContent == null
+                ? 0
+                : selectedDisplay.displayContent.padding
             "
             :ignore-schedule="selectedDisplay.ignoreScheduledContent"
             @onIgnoreScheduleChange="setIgnoreSchedule"

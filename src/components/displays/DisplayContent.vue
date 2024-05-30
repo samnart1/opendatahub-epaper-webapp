@@ -33,6 +33,16 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             >
             </b-form-select>
           </b-form-group>
+          <b-input-group>
+            <label for="padding">Header/Footer size (aka padding)</label>
+            <b-form-input
+              id="padding"
+              label=""
+              v-model="padding"
+              type="number"
+              min="0"
+            ></b-form-input>
+          </b-input-group>
           <ImageFields
             v-model="imageFields"
             @selectedRowChange="onSelectedRowChange"
@@ -44,6 +54,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         class="image_preview"
         :imageSrc="imageSrc"
         :imageFields="imageFields"
+        :padding="padding"
         :focusedFieldIndex="focusedFieldIndex"
       ></ImagePreview>
     </div>
